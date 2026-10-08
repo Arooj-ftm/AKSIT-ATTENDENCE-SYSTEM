@@ -1,0 +1,111 @@
+.profile {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 448px;
+    max-height: 92vh;
+    overflow-y: auto;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, .25);
+}
+
+/* Upar ki gradient patti */
+.profile-banner {
+    height: 96px;
+    background: linear-gradient(to right, #0f1b33, #1d4ed8);
+}
+
+.profile-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .15);
+    color: #fff;
+    cursor: pointer;
+}
+
+.profile-close:hover {
+    background: rgba(255, 255, 255, .25);
+}
+
+.profile-body {
+    padding: 0 28px 28px;
+    margin-top: -36px;
+}
+
+/* Avatar ke gird safed ring */
+.profile-avatar {
+    display: inline-block;
+    border-radius: 16px;
+    box-shadow: 0 0 0 4px #fff;
+}
+
+.profile-name {
+    margin: 12px 0 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.profile-role {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #2563eb;
+}
+
+.profile-details {
+    margin-top: 20px;
+    display: grid;
+    gap: 8px;
+    font-size: 14px;
+    color: #334155;
+}
+
+.profile-detail {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    background: #f8fafc;
+}
+
+.profile-detail svg {
+    color: #94a3b8;
+    flex-shrink: 0;
+}
+
+.profile-label {
+    margin: 20px 0 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #94a3b8;
+}
+
+.profile-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.profile-skill {
+    padding: 4px 12px;
+    font-size: 12px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.profile-actions {
+    margin-top: 24px;
+    display: flex;
+    gap: 12px;
+}

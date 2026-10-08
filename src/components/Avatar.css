@@ -1,0 +1,55 @@
+.avatar {
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.avatar-sm {
+    width: 36px;
+    height: 36px;
+    font-size: 12px;
+}
+
+.avatar-md {
+    width: 56px;
+    height: 56px;
+    font-size: 18px;
+}
+
+.avatar-lg {
+    width: 72px;
+    height: 72px;
+    font-size: 24px;
+}
+
+.tint-0 {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.tint-1 {
+    background: #e0e7ff;
+    color: #4338ca;
+}
+
+.tint-2 {
+    background: #d1fae5;
+    color: #047857;
+}
+
+.tint-3 {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.tint-4 {
+    background: #ffe4e6;
+    color: #be123c;
+}
+
+.tint-5 {
+    background: #e0f2fe;
+    color: #0369a1;
+}

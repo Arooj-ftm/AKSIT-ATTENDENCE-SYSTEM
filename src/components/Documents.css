@@ -1,0 +1,1438 @@
+/* =========================================================
+   DOCUMENTS / RECRUITMENT PAGE
+   ========================================================= */
+
+.doc-page {
+    --acc: #6d28d9;
+    --acc-soft: #f5f3ff;
+
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 24px;
+
+    min-height: 100%;
+    overflow: visible;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+.doc-hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 28px;
+    border-radius: 20px;
+    color: #fff;
+
+    background: linear-gradient(120deg,
+            #0f1b33 0%,
+            #1e3a8a 60%,
+            var(--acc) 130%);
+
+    box-shadow: 0 10px 30px rgba(15, 27, 51, 0.18);
+}
+
+.doc-eyebrow {
+    margin: 0 0 7px;
+    color: #c4b5fd;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.doc-title {
+    margin: 0;
+    color: #fff;
+}
+
+.doc-sub {
+    margin: 8px 0 0;
+    color: #cbd5e1;
+}
+
+.doc-badge-hero {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   COMMON CARD
+   ========================================================= */
+
+.doc-card {
+    border-radius: 18px;
+    background: #fff;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.doc-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    padding: 8px 14px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #f1f5f9;
+    color: #334155;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    transition: 0.15s;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.doc-btn:hover:not(:disabled) {
+    background: #e2e8f0;
+}
+
+.doc-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.doc-btn.solid {
+    background: var(--acc);
+    color: #fff;
+}
+
+.doc-btn.solid:hover:not(:disabled) {
+    background: var(--acc);
+    filter: brightness(1.1);
+}
+
+.doc-btn.ok {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.doc-btn.ok:hover {
+    background: #d1fae5;
+}
+
+.doc-btn.bad {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.doc-btn.bad:hover {
+    background: #fee2e2;
+}
+
+
+/* =========================================================
+   SPINNER
+   ========================================================= */
+
+.spin {
+    animation: docspin 1s linear infinite;
+}
+
+@keyframes docspin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   EMAIL CONNECTION
+   ========================================================= */
+
+.doc-mail {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px;
+
+    padding: 22px;
+}
+
+.doc-mail-ico {
+    width: 48px;
+    height: 48px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 14px;
+
+    background: var(--acc-soft);
+    color: var(--acc);
+
+    flex-shrink: 0;
+}
+
+.doc-mail-text {
+    flex: 1;
+    min-width: 240px;
+}
+
+.doc-mail-text h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.doc-mail-text p {
+    margin-top: 4px;
+
+    font-size: 13px;
+    line-height: 1.5;
+    color: #64748b;
+}
+
+.doc-mail-text small {
+    display: block;
+    margin-top: 6px;
+
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.doc-providers,
+.doc-cf,
+.doc-mail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.doc-cf input {
+    min-width: 220px;
+
+    padding: 9px 12px;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+
+    font-size: 13px;
+    outline: none;
+}
+
+.doc-cf input:focus {
+    border-color: var(--acc);
+    box-shadow: 0 0 0 3px var(--acc-soft);
+}
+
+.doc-mail-main {
+    flex: 1;
+    min-width: 260px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.doc-mail-main small {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.doc-live {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    color: #0f172a;
+}
+
+.doc-live i {
+    width: 9px;
+    height: 9px;
+
+    border-radius: 50%;
+
+    background: #10b981;
+    box-shadow: 0 0 0 4px #d1fae5;
+}
+
+.doc-auto {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #475569;
+}
+
+
+/* =========================================================
+   AUTO SYNC SWITCH
+   ========================================================= */
+
+.doc-switch {
+    position: relative;
+
+    width: 38px;
+    height: 22px;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 999px;
+
+    background: #cbd5e1;
+
+    transition: background 0.2s;
+
+    cursor: pointer;
+}
+
+.doc-switch i {
+    position: absolute;
+
+    top: 3px;
+    left: 3px;
+
+    width: 16px;
+    height: 16px;
+
+    border-radius: 50%;
+
+    background: #fff;
+
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+
+    transition: transform 0.2s;
+}
+
+.doc-switch.on {
+    background: var(--acc);
+}
+
+.doc-switch.on i {
+    transform: translateX(16px);
+}
+
+
+/* =========================================================
+   ACTIVITY
+   ========================================================= */
+
+.doc-activity {
+    flex: 1;
+    min-width: 260px;
+
+    padding: 14px;
+
+    border-radius: 14px;
+
+    background: #f8fafc;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.doc-activity>b {
+    font-size: 13px;
+    color: #0f172a;
+}
+
+.doc-activity small {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.doc-activity p {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+
+    font-size: 13px;
+    color: #334155;
+}
+
+.doc-activity p svg {
+    margin-top: 3px;
+    color: var(--acc);
+    flex-shrink: 0;
+}
+
+.doc-activity p span small {
+    display: block;
+}
+
+
+/* =========================================================
+   CANDIDATES / INTERNS / EMPLOYEES TABS
+   ========================================================= */
+
+.doc-tabs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    width: fit-content;
+    max-width: 100%;
+
+    padding: 4px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    border-radius: 14px;
+    background: #e2e8f0;
+
+    flex-shrink: 0;
+
+    position: relative;
+    z-index: 5;
+}
+
+.doc-tab {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 9px 16px;
+
+    border: none;
+    border-radius: 11px;
+
+    background: transparent;
+
+    color: #64748b;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.doc-tab span {
+    padding: 2px 8px;
+
+    border-radius: 999px;
+
+    background: rgba(15, 23, 42, 0.08);
+
+    font-size: 12px;
+}
+
+.doc-tab:hover {
+    color: #0f172a;
+}
+
+.doc-tab.on {
+    background: #fff;
+    color: #0f172a;
+
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+}
+
+.doc-dot {
+    position: absolute;
+
+    top: 5px;
+    right: 5px;
+
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: #ef4444;
+}
+
+
+/* =========================================================
+   STATS
+   ========================================================= */
+
+.doc-stats {
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+
+    margin-top: 0;
+}
+
+@media (min-width: 1024px) {
+    .doc-stats {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+.doc-stat {
+    min-width: 0;
+
+    text-align: left;
+
+    padding: 16px 18px;
+
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 16px;
+
+    background: #fff;
+
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+
+    transition: 0.15s;
+
+    cursor: pointer;
+}
+
+.doc-stat.static {
+    cursor: default;
+}
+
+.doc-stat:not(.static):hover {
+    border-color: #c4b5fd;
+}
+
+.doc-stat.sel {
+    border-color: var(--acc);
+
+    box-shadow: 0 0 0 3px var(--acc-soft);
+}
+
+.doc-stat p {
+    font-size: 13px;
+    color: #64748b;
+}
+
+.doc-stat b {
+    display: block;
+
+    margin-top: 6px;
+
+    font-size: 28px;
+    font-weight: 700;
+
+    color: #0f172a;
+}
+
+.doc-stat small {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   TOOLBAR
+   ========================================================= */
+
+.doc-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+}
+
+.doc-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 10px 14px;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+
+    background: #fff;
+
+    color: #94a3b8;
+}
+
+.doc-search:focus-within {
+    border-color: var(--acc);
+
+    box-shadow: 0 0 0 3px var(--acc-soft);
+}
+
+.doc-search input {
+    width: 220px;
+
+    border: none;
+    outline: none;
+
+    background: transparent;
+
+    font-size: 14px;
+    color: #0f172a;
+}
+
+.doc-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.chip {
+    padding: 7px 11px;
+
+    border: none;
+    border-radius: 9px;
+
+    background: #f1f5f9;
+
+    color: #64748b;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.chip:hover {
+    background: #e2e8f0;
+}
+
+.chip.on {
+    background: var(--acc-soft);
+    color: var(--acc);
+}
+
+
+/* =========================================================
+   APPLICANT LIST
+   ========================================================= */
+
+.doc-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    padding-bottom: 32px;
+}
+
+.doc-empty {
+    padding: 36px 0;
+
+    text-align: center;
+
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   APPLICANT ROW
+   ========================================================= */
+
+.doc-row {
+    display: grid;
+
+    grid-template-columns: 1fr;
+
+    align-items: center;
+    gap: 12px;
+
+    padding: 14px 16px;
+
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 16px;
+
+    background: #fff;
+
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+
+    transition: 0.2s;
+}
+
+@media (min-width: 1100px) {
+    .doc-row {
+        grid-template-columns:
+            minmax(180px, 230px) minmax(180px, 220px) minmax(160px, 190px) 1fr;
+    }
+}
+
+.doc-row.fresh {
+    border-color: #c4b5fd;
+
+    background:
+        linear-gradient(90deg,
+            #f5f3ff,
+            #fff 40%);
+}
+
+
+/* =========================================================
+   APPLICANT INFO
+   ========================================================= */
+
+.doc-who {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-width: 0;
+}
+
+.doc-who>div,
+.doc-file span,
+.doc-status {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+}
+
+.doc-who b {
+    font-size: 14px;
+    color: #0f172a;
+}
+
+.doc-who small,
+.doc-file small,
+.doc-status small {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.doc-new {
+    display: inline-block;
+
+    margin-left: 6px;
+    padding: 2px 8px;
+
+    border-radius: 999px;
+
+    background: #ede9fe;
+    color: #6d28d9;
+
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   FILE BUTTON
+   ========================================================= */
+
+.doc-file {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    min-width: 0;
+
+    padding: 8px 10px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: #f8fafc;
+
+    text-align: left;
+    color: #475569;
+
+    cursor: pointer;
+}
+
+.doc-file:hover {
+    background: #f1f5f9;
+}
+
+.doc-file b {
+    display: block;
+
+    max-width: 100%;
+
+    font-size: 13px;
+    color: #0f172a;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.doc-status {
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.doc-badge {
+    padding: 3px 12px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.doc-t-blue {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.doc-t-green {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.doc-t-purple {
+    background: #f5f3ff;
+    color: #6d28d9;
+}
+
+.doc-t-teal {
+    background: #f0fdfa;
+    color: #0f766e;
+}
+
+.doc-t-red {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.doc-actions {
+    display: flex;
+    flex-wrap: wrap;
+
+    justify-content: flex-start;
+
+    gap: 8px;
+}
+
+@media (min-width: 1100px) {
+    .doc-actions {
+        justify-content: flex-end;
+    }
+}
+
+
+/* =========================================================
+   EMPLOYEE DOCUMENTS
+   ========================================================= */
+
+.doc-emp {
+    overflow: hidden;
+
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 16px;
+
+    background: #fff;
+
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
+.doc-emp-head {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    padding: 14px 16px;
+
+    border: none;
+
+    background: transparent;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.doc-emp-head:hover {
+    background: #f8fafc;
+}
+
+.doc-emp-head>svg {
+    margin-left: auto;
+
+    color: #94a3b8;
+
+    transition: transform 0.2s;
+}
+
+.doc-emp-head .flip {
+    transform: rotate(180deg);
+}
+
+.doc-emp-who {
+    display: flex;
+    flex-direction: column;
+
+    flex: 1;
+
+    min-width: 0;
+}
+
+.doc-emp-who b {
+    font-size: 14px;
+    color: #0f172a;
+}
+
+.doc-emp-who small,
+.doc-emp-prog small {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.doc-emp-prog {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    width: 150px;
+}
+
+.doc-bar {
+    display: block;
+
+    height: 6px;
+
+    border-radius: 999px;
+
+    background: #e2e8f0;
+
+    overflow: hidden;
+}
+
+.doc-bar i {
+    display: block;
+
+    height: 100%;
+
+    border-radius: 999px;
+
+    background: var(--acc);
+}
+
+.doc-checks {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    padding: 4px 16px 14px 66px;
+
+    border-top: 1px solid #f1f5f9;
+}
+
+.doc-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 8px 0;
+
+    font-size: 14px;
+    color: #334155;
+}
+
+.doc-tick {
+    width: 22px;
+    height: 22px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: #fee2e2;
+    color: #b91c1c;
+
+    flex-shrink: 0;
+}
+
+.doc-tick.on {
+    background: #d1fae5;
+    color: #047857;
+}
+
+.doc-via,
+.doc-req {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    padding: 2px 8px;
+
+    border-radius: 999px;
+
+    background: #f5f3ff;
+    color: #6d28d9;
+
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 700;
+}
+
+.doc-req {
+    background: #fffbeb;
+    color: #b45309;
+}
+
+.doc-link {
+    margin-left: auto;
+
+    border: none;
+    background: transparent;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    color: var(--acc);
+
+    cursor: pointer;
+}
+
+.doc-check .doc-via,
+.doc-check .doc-req {
+    margin-left: auto;
+}
+
+
+/* =========================================================
+   MODALS
+   ========================================================= */
+
+.doc-modal {
+    width: 100%;
+    max-width: 460px;
+    max-height: 92vh;
+
+    overflow-y: auto;
+
+    padding: 24px;
+
+    border-radius: 18px;
+
+    background: #fff;
+
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+
+    box-sizing: border-box;
+}
+
+.doc-modal-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    margin-bottom: 16px;
+}
+
+.doc-modal-head h3 {
+    font-size: 18px;
+    font-weight: 700;
+
+    color: #0f172a;
+}
+
+.doc-modal-head p {
+    margin-top: 2px;
+
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+.doc-x {
+    width: 32px;
+    height: 32px;
+
+    display: grid;
+    place-items: center;
+
+    border: none;
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: #64748b;
+
+    cursor: pointer;
+}
+
+.doc-x:hover {
+    background: #f1f5f9;
+}
+
+
+/* =========================================================
+   FILE CARD
+   ========================================================= */
+
+.doc-filecard {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 14px;
+
+    border-radius: 14px;
+
+    background: var(--acc-soft);
+    color: var(--acc);
+}
+
+.doc-filecard div {
+    display: flex;
+    flex-direction: column;
+}
+
+.doc-filecard b {
+    font-size: 14px;
+    color: #0f172a;
+}
+
+.doc-filecard small {
+    font-size: 12px;
+    color: #64748b;
+}
+
+
+/* =========================================================
+   FACTS
+   ========================================================= */
+
+.doc-facts {
+    display: grid;
+    gap: 8px;
+
+    margin: 14px 0;
+}
+
+.doc-facts div {
+    display: flex;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    font-size: 13px;
+}
+
+.doc-facts dt {
+    color: #94a3b8;
+}
+
+.doc-facts dd {
+    margin: 0;
+
+    color: #0f172a;
+
+    font-weight: 500;
+
+    text-align: right;
+}
+
+
+/* =========================================================
+   FORMS
+   ========================================================= */
+
+.doc-label {
+    display: block;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    color: #64748b;
+}
+
+.doc-label textarea,
+.doc-form input,
+.doc-form select {
+    display: block;
+
+    width: 100%;
+
+    margin-top: 6px;
+
+    padding: 10px 12px;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+
+    font: inherit;
+    font-size: 14px;
+
+    color: #0f172a;
+
+    outline: none;
+
+    background: #fff;
+
+    box-sizing: border-box;
+}
+
+.doc-label textarea:focus,
+.doc-form input:focus,
+.doc-form select:focus {
+    border-color: var(--acc);
+
+    box-shadow: 0 0 0 3px var(--acc-soft);
+}
+
+.doc-form {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 14px;
+}
+
+.doc-form.one {
+    grid-template-columns: 1fr;
+}
+
+.doc-form label {
+    font-size: 12px;
+    font-weight: 600;
+
+    color: #64748b;
+}
+
+.doc-hint {
+    margin-top: 12px;
+
+    font-size: 12px;
+    line-height: 1.5;
+
+    color: #94a3b8;
+}
+
+.doc-modal-actions {
+    display: flex;
+    gap: 10px;
+
+    margin-top: 18px;
+}
+
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+
+.doc-toast {
+    position: fixed;
+
+    bottom: 28px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    z-index: 60;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    max-width: 90vw;
+
+    padding: 12px 20px;
+
+    border-radius: 12px;
+
+    background: #0f1b33;
+    color: #fff;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.3);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .doc-page {
+        padding: 16px;
+        gap: 18px;
+    }
+
+    .doc-hero {
+        padding: 22px;
+    }
+
+    .doc-title {
+        font-size: 23px;
+    }
+
+    .doc-sub {
+        font-size: 13px;
+    }
+
+    .doc-mail {
+        padding: 18px;
+    }
+
+    .doc-tabs {
+        width: 100%;
+    }
+
+    .doc-tab {
+        flex: 1;
+    }
+
+    .doc-search {
+        width: 100%;
+    }
+
+    .doc-search input {
+        width: 100%;
+    }
+
+    .doc-toolbar {
+        align-items: stretch;
+    }
+
+    .doc-chips {
+        width: 100%;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 2px;
+    }
+
+    .doc-row {
+        padding: 14px;
+    }
+
+    .doc-emp-prog {
+        width: 100px;
+    }
+
+    .doc-checks {
+        padding-left: 16px;
+    }
+}
+
+
+@media (max-width: 560px) {
+
+    .doc-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .doc-form {
+        grid-template-columns: 1fr;
+    }
+
+    .doc-mail {
+        align-items: flex-start;
+    }
+
+    .doc-mail-ico {
+        width: 42px;
+        height: 42px;
+    }
+
+    .doc-providers,
+    .doc-cf {
+        width: 100%;
+    }
+
+    .doc-cf input {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .doc-cf .doc-btn {
+        width: 100%;
+    }
+
+    .doc-emp-head {
+        flex-wrap: wrap;
+    }
+
+    .doc-emp-prog {
+        order: 3;
+        width: calc(100% - 50px);
+        margin-left: 50px;
+    }
+
+    .doc-check {
+        flex-wrap: wrap;
+    }
+
+    .doc-link,
+    .doc-check .doc-via,
+    .doc-check .doc-req {
+        margin-left: auto;
+    }
+}
+
+
+
+/* FORCE DOCUMENTS HERO */
+.doc-page .doc-hero {
+    background: linear-gradient(120deg,
+            #0f1b33 0%,
+            #1e3a8a 60%,
+            #6d28d9 130%) !important;
+
+    color: #ffffff !important;
+}
+
+.doc-page .doc-hero .doc-title {
+    color: #ffffff !important;
+}
+
+.doc-page .doc-hero .doc-eyebrow {
+    color: #c4b5fd !important;
+}
+
+.doc-page .doc-hero .doc-sub {
+    color: #cbd5e1 !important;
+}
+
+.doc-page .doc-hero .doc-badge-hero {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+}
