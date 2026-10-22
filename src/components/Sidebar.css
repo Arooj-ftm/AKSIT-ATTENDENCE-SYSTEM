@@ -135,3 +135,27 @@
     font-size: 12px;
     color: #94a3b8;
 }
+
+
+
+
+/* Sidebar Logout Button */
+.sidebar-bottom-actions {
+    margin-top: 24px;
+    margin-bottom: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #e5eaf2;
+}
+
+.sidebar-logout {
+    width: 100%;
+    color: #d14343;
+    background: transparent;
+    border: none;
+    text-align: left;
+}
+
+.sidebar-logout:hover {
+    background: #fff1f1;
+    color: #b42323;
+}

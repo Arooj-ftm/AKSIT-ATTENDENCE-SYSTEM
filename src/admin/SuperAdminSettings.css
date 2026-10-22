@@ -1,0 +1,1126 @@
+/* =========================================
+   SUPER ADMIN SETTINGS
+   Light-blue hero + clean white cards
+   Fully scoped to Super Admin Settings
+========================================= */
+
+.super-settings-page {
+    --ss-bg: #f5f7fb;
+    --ss-card: #ffffff;
+    --ss-text: #253247;
+    --ss-muted: #758197;
+    --ss-border: #e5eaf1;
+    --ss-primary: #345987;
+    --ss-primary-dark: #243b60;
+    --ss-navy: #192d4a;
+    --ss-radius: 16px;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 100%;
+    padding: 24px;
+    color: var(--ss-text);
+    background: var(--ss-bg);
+    border-radius: 18px;
+    box-sizing: border-box;
+}
+
+.super-settings-page *,
+.super-settings-page *::before,
+.super-settings-page *::after {
+    box-sizing: border-box;
+}
+
+.super-settings-page button,
+.super-settings-page input {
+    font: inherit;
+}
+
+/* =========================================
+   HERO HEADER — matches Employee Tasks
+========================================= */
+
+.super-settings-page .ss-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 30px;
+    margin-bottom: 24px;
+    background: linear-gradient(120deg,
+            #eaf1fb 0%,
+            #f5f8fd 65%,
+            #e7eef9 100%);
+    border: 1px solid #dce6f4;
+    border-radius: 18px;
+}
+
+.super-settings-page .ss-header>div:first-child {
+    min-width: 0;
+}
+
+.super-settings-page .ss-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    color: var(--ss-primary);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+}
+
+.super-settings-page .ss-header h1 {
+    margin: 0;
+    color: #192d4a;
+    font-size: clamp(26px, 3vw, 34px);
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: -0.7px;
+}
+
+.super-settings-page .ss-header>div:first-child>p {
+    max-width: 600px;
+    margin: 10px 0 0;
+    color: #61718a;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.super-settings-page .ss-header-badge {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 15px;
+    color: #dce8ff;
+    background: #192d4a;
+    border: 1px solid #304867;
+    border-radius: 11px;
+    font-size: 12px;
+    font-weight: 750;
+}
+
+/* =========================================
+   MAIN LAYOUT
+========================================= */
+
+.super-settings-page .ss-layout {
+    display: grid;
+    grid-template-columns: minmax(235px, 275px) minmax(0, 1fr);
+    align-items: start;
+    gap: 24px;
+}
+
+.super-settings-page .ss-navigation,
+.super-settings-page .ss-content {
+    min-width: 0;
+}
+
+.super-settings-page .ss-navigation {
+    padding: 12px;
+    background: var(--ss-card);
+    border: 1px solid var(--ss-border);
+    border-radius: var(--ss-radius);
+    box-shadow: 0 3px 12px rgb(27 45 75 / 3%);
+}
+
+.super-settings-page .ss-nav-heading {
+    padding: 10px 12px 13px;
+    color: #8a96aa;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.3px;
+}
+
+/* =========================================
+   NAVIGATION ITEMS
+========================================= */
+
+.super-settings-page .ss-nav-item {
+    position: relative;
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    align-items: center;
+    gap: 11px;
+    padding: 12px 10px;
+    margin-bottom: 5px;
+    color: #68758c;
+    text-align: left;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 11px;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.super-settings-page .ss-nav-item:last-of-type {
+    margin-bottom: 0;
+}
+
+.super-settings-page .ss-nav-item:hover {
+    color: var(--ss-navy);
+    background: #f3f6fb;
+    border-color: #e9eef6;
+}
+
+.super-settings-page .ss-nav-item.active {
+    color: #243b60;
+    background: #eaf1fb;
+    border-color: #d7e3f4;
+}
+
+.super-settings-page .ss-nav-icon {
+    display: flex;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    color: #78869e;
+    background: #f1f4f9;
+    border-radius: 10px;
+    transition:
+        color 0.2s ease,
+        background 0.2s ease;
+}
+
+.super-settings-page .ss-nav-item.active .ss-nav-icon {
+    color: #ffffff;
+    background: #345987;
+}
+
+.super-settings-page .ss-nav-copy {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.super-settings-page .ss-nav-copy strong {
+    color: inherit;
+    font-size: 12px;
+    font-weight: 750;
+}
+
+.super-settings-page .ss-nav-copy small {
+    color: var(--ss-muted);
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.super-settings-page .ss-nav-chevron {
+    flex-shrink: 0;
+    opacity: 0.6;
+}
+
+.super-settings-page .ss-nav-item.active .ss-nav-chevron {
+    opacity: 1;
+}
+
+/* =========================================
+   SIDEBAR SECURITY NOTE
+========================================= */
+
+.super-settings-page .ss-sidebar-note {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 9px;
+    margin-top: 22px;
+    padding: 16px 13px;
+    color: #dce6fb;
+    background: linear-gradient(145deg, #243b60, #192d4a);
+    border: 1px solid #304867;
+    border-radius: 12px;
+}
+
+.super-settings-page .ss-sidebar-note>svg {
+    color: #b5cbed;
+}
+
+.super-settings-page .ss-sidebar-note strong {
+    font-size: 12px;
+    font-weight: 750;
+}
+
+.super-settings-page .ss-sidebar-note p {
+    margin: 0;
+    color: #c1cfe3;
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+/* =========================================
+   CONTENT SECTION HEADING
+========================================= */
+
+.super-settings-page .ss-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 17px;
+}
+
+.super-settings-page .ss-section-kicker {
+    color: var(--ss-primary);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.3px;
+}
+
+.super-settings-page .ss-section-heading h2 {
+    margin: 7px 0 5px;
+    color: var(--ss-navy);
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.super-settings-page .ss-section-heading p {
+    margin: 0;
+    color: var(--ss-muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* =========================================
+   CARDS
+========================================= */
+
+.super-settings-page .ss-card {
+    min-width: 0;
+    padding: 24px;
+    background: var(--ss-card);
+    border: 1px solid var(--ss-border);
+    border-radius: var(--ss-radius);
+    box-shadow: 0 3px 12px rgb(27 45 75 / 3%);
+}
+
+.super-settings-page .ss-card-heading {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding-bottom: 20px;
+    margin-bottom: 22px;
+    border-bottom: 1px solid #edf0f6;
+}
+
+.super-settings-page .ss-card-icon {
+    display: flex;
+    width: 45px;
+    height: 45px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    color: #345987;
+    background: #eaf1fb;
+    border-radius: 12px;
+}
+
+.super-settings-page .ss-card-heading h3 {
+    margin: 0;
+    color: var(--ss-navy);
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.super-settings-page .ss-card-heading p {
+    margin: 5px 0 0;
+    color: var(--ss-muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* =========================================
+   PROFILE
+========================================= */
+
+.super-settings-page .ss-profile-summary {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 18px;
+    margin-bottom: 25px;
+    background: #f3f7fd;
+    border: 1px solid #e0e9f5;
+    border-radius: 13px;
+}
+
+.super-settings-page .ss-avatar {
+    display: flex;
+    width: 58px;
+    height: 58px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    background: linear-gradient(145deg, #527bb2, #243b60);
+    border: 3px solid #e2ebf8;
+    border-radius: 16px;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.super-settings-page .ss-profile-summary h3 {
+    margin: 0;
+    color: var(--ss-navy);
+    font-size: 16px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.super-settings-page .ss-profile-summary p {
+    margin: 5px 0 9px;
+    color: var(--ss-muted);
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.super-settings-page .ss-role-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 9px;
+    color: #345987;
+    background: #e5eef9;
+    border: 1px solid #d3e2f4;
+    border-radius: 7px;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.super-settings-page .ss-fields-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+/* =========================================
+   FORM FIELDS
+========================================= */
+
+.super-settings-page .ss-field {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.super-settings-page .ss-field label {
+    color: #43516b;
+    font-size: 12px;
+    font-weight: 750;
+}
+
+.super-settings-page .ss-readonly-field {
+    display: flex;
+    min-width: 0;
+    min-height: 46px;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    color: #54627b;
+    background: #f7f9fd;
+    border: 1px solid #e5eaf3;
+    border-radius: 10px;
+    font-size: 12px;
+}
+
+.super-settings-page .ss-readonly-field svg {
+    flex-shrink: 0;
+    color: #8996ac;
+}
+
+.super-settings-page .ss-readonly-field span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+/* =========================================
+   NOTICES
+========================================= */
+
+.super-settings-page .ss-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 13px 15px;
+    margin-bottom: 17px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.super-settings-page .ss-notice svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.super-settings-page .ss-notice-error {
+    color: #a52b3c;
+    background: #fff0f1;
+    border-color: #ffd8dd;
+}
+
+.super-settings-page .ss-notice-success {
+    color: #18794e;
+    background: #eafaf1;
+    border-color: #c8f0d9;
+}
+
+.super-settings-page .ss-notice-info {
+    color: #315987;
+    background: #eef4fc;
+    border-color: #d8e6f6;
+}
+
+.super-settings-page .ss-info-strip {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 14px;
+    margin-top: 23px;
+    color: #53668c;
+    background: #f2f6ff;
+    border: 1px solid #e1e9ff;
+    border-radius: 11px;
+}
+
+.super-settings-page .ss-info-strip svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: #345987;
+}
+
+.super-settings-page .ss-info-strip p {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.8;
+}
+
+/* =========================================
+   SECURITY ROW
+========================================= */
+
+.super-settings-page .ss-security-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 17px 0;
+}
+
+.super-settings-page .ss-security-icon {
+    display: flex;
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    color: #345987;
+    background: #eaf1fb;
+    border-radius: 12px;
+}
+
+.super-settings-page .ss-security-copy {
+    min-width: 0;
+    flex: 1;
+}
+
+.super-settings-page .ss-security-copy strong {
+    color: var(--ss-navy);
+    font-size: 13px;
+}
+
+.super-settings-page .ss-security-copy p {
+    margin: 5px 0 0;
+    color: var(--ss-muted);
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.super-settings-page .ss-coming-soon {
+    flex-shrink: 0;
+    padding: 6px 9px;
+    color: #8a6417;
+    background: #fff7e4;
+    border: 1px solid #f5e7bc;
+    border-radius: 7px;
+    font-size: 10px;
+    font-weight: 750;
+}
+
+/* =========================================
+   SEARCH
+========================================= */
+
+.super-settings-page .ss-user-search {
+    margin: 22px 0 15px;
+}
+
+.super-settings-page .ss-search-box,
+.super-settings-page .ss-password-input {
+    display: flex;
+    min-width: 0;
+    min-height: 47px;
+    align-items: center;
+    gap: 10px;
+    padding: 0 12px;
+    background: #ffffff;
+    border: 1px solid #dfe5ef;
+    border-radius: 10px;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.super-settings-page .ss-search-box:focus-within,
+.super-settings-page .ss-password-input:focus-within {
+    border-color: #789ac2;
+    box-shadow: 0 0 0 3px rgb(52 89 135 / 10%);
+}
+
+.super-settings-page .ss-search-box>svg {
+    flex-shrink: 0;
+    color: #8491a7;
+}
+
+.super-settings-page .ss-search-box input,
+.super-settings-page .ss-password-input input {
+    width: 100%;
+    min-width: 0;
+    min-height: 43px;
+    padding: 9px 0;
+    color: var(--ss-text);
+    background: transparent;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    font-size: 12px;
+}
+
+.super-settings-page .ss-search-box input::placeholder,
+.super-settings-page .ss-password-input input::placeholder {
+    color: #9aa5b6;
+}
+
+.super-settings-page .ss-search-box input:focus,
+.super-settings-page .ss-password-input input:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.super-settings-page .ss-icon-button {
+    display: inline-flex;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    color: #687790;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition:
+        color 0.2s ease,
+        background 0.2s ease;
+}
+
+.super-settings-page .ss-icon-button:hover:not(:disabled) {
+    color: #345987;
+    background: #eaf1fb;
+}
+
+.super-settings-page .ss-icon-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* =========================================
+   USER LIST
+========================================= */
+
+.super-settings-page .ss-user-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.super-settings-page .ss-user-option {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    align-items: center;
+    gap: 11px;
+    padding: 12px;
+    text-align: left;
+    background: #ffffff;
+    border: 1px solid #e5eaf3;
+    border-radius: 11px;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.super-settings-page .ss-user-option:hover {
+    background: #f5f8fd;
+    border-color: #c7d8ed;
+}
+
+.super-settings-page .ss-user-option.selected {
+    background: #eaf1fb;
+    border-color: #9bb8dc;
+    box-shadow: 0 0 0 2px rgb(52 89 135 / 6%);
+}
+
+.super-settings-page .ss-user-avatar {
+    display: flex;
+    width: 39px;
+    height: 39px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    color: #345987;
+    background: #e4edf8;
+    border-radius: 11px;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.super-settings-page .ss-user-info {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.super-settings-page .ss-user-info strong {
+    color: var(--ss-navy);
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.super-settings-page .ss-user-info small {
+    color: var(--ss-muted);
+    font-size: 10px;
+    overflow-wrap: anywhere;
+}
+
+.super-settings-page .ss-user-role {
+    flex-shrink: 0;
+    padding: 5px 7px;
+    color: #596b88;
+    background: #f1f4f9;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 750;
+}
+
+.super-settings-page .ss-empty-state {
+    display: flex;
+    min-height: 115px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #8995aa;
+    background: #f8faff;
+    border: 1px dashed #dbe2ee;
+    border-radius: 11px;
+}
+
+.super-settings-page .ss-empty-state p {
+    margin: 0;
+    font-size: 12px;
+}
+
+/* =========================================
+   PASSWORD RESET FORM
+========================================= */
+
+.super-settings-page .ss-reset-form {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+    padding-top: 22px;
+    margin-top: 22px;
+    border-top: 1px solid #e9edf5;
+}
+
+.super-settings-page .ss-selected-account {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 13px;
+    color: #345987;
+    background: #eef4fc;
+    border: 1px solid #d9e6f5;
+    border-radius: 10px;
+}
+
+.super-settings-page .ss-selected-account>svg {
+    flex-shrink: 0;
+}
+
+.super-settings-page .ss-selected-account>div {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.super-settings-page .ss-selected-account strong {
+    color: var(--ss-navy);
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.super-settings-page .ss-selected-account span {
+    color: var(--ss-muted);
+    font-size: 11px;
+    overflow-wrap: anywhere;
+}
+
+.super-settings-page .ss-form-hint {
+    margin: -5px 0 0;
+    color: var(--ss-muted);
+    font-size: 11px;
+    line-height: 1.8;
+}
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+.super-settings-page .ss-primary-button,
+.super-settings-page .ss-secondary-button {
+    display: inline-flex;
+    min-height: 43px;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 11px 15px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 750;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.super-settings-page .ss-primary-button {
+    color: #ffffff;
+    background: #345987;
+    border-color: #345987;
+}
+
+.super-settings-page .ss-primary-button:hover:not(:disabled) {
+    background: #243b60;
+    border-color: #243b60;
+}
+
+.super-settings-page .ss-secondary-button {
+    align-self: flex-start;
+    color: #345987;
+    background: #eaf1fb;
+    border-color: #d6e3f4;
+}
+
+.super-settings-page .ss-secondary-button:hover:not(:disabled) {
+    background: #dfeaf8;
+    border-color: #c5d8ef;
+}
+
+.super-settings-page .ss-primary-button:active:not(:disabled),
+.super-settings-page .ss-secondary-button:active:not(:disabled) {
+    transform: translateY(1px);
+}
+
+.super-settings-page .ss-primary-button:disabled,
+.super-settings-page .ss-secondary-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* =========================================
+   SYSTEM INFORMATION
+========================================= */
+
+.super-settings-page .ss-system-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.super-settings-page .ss-system-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 15px 0;
+    border-bottom: 1px solid #edf0f6;
+}
+
+.super-settings-page .ss-system-row:first-child {
+    padding-top: 0;
+}
+
+.super-settings-page .ss-system-row:last-child {
+    border-bottom: none;
+}
+
+.super-settings-page .ss-system-row>span {
+    color: var(--ss-muted);
+    font-size: 12px;
+}
+
+.super-settings-page .ss-system-row>strong {
+    color: var(--ss-navy);
+    font-size: 12px;
+    font-weight: 750;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+/* =========================================
+   ACCESS DENIED
+========================================= */
+
+.super-settings-page .ss-access-denied {
+    display: flex;
+    min-height: 350px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 13px;
+    padding: 30px;
+    text-align: center;
+    background: #ffffff;
+    border: 1px solid var(--ss-border);
+    border-radius: var(--ss-radius);
+}
+
+.super-settings-page .ss-access-denied>svg {
+    color: #d04453;
+}
+
+.super-settings-page .ss-access-denied h2 {
+    margin: 0;
+    color: var(--ss-navy);
+    font-size: 22px;
+}
+
+.super-settings-page .ss-access-denied p {
+    margin: 0;
+    color: var(--ss-muted);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* =========================================
+   LOADING ANIMATION
+========================================= */
+
+@keyframes ss-rotate {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.super-settings-page .ss-spin {
+    animation: ss-rotate 0.9s linear infinite;
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 1050px) {
+    .super-settings-page {
+        padding: 20px;
+    }
+
+    .super-settings-page .ss-layout {
+        grid-template-columns: 225px minmax(0, 1fr);
+        gap: 17px;
+    }
+
+    .super-settings-page .ss-card {
+        padding: 20px;
+    }
+
+    .super-settings-page .ss-user-role {
+        display: none;
+    }
+}
+
+/* =========================================
+   SMALL TABLET AND MOBILE
+========================================= */
+
+@media (max-width: 760px) {
+    .super-settings-page {
+        padding: 15px;
+        border-radius: 14px;
+    }
+
+    .super-settings-page .ss-header {
+        flex-direction: column;
+        gap: 17px;
+        padding: 22px;
+        margin-bottom: 20px;
+    }
+
+    .super-settings-page .ss-header-badge {
+        align-self: flex-start;
+    }
+
+    .super-settings-page .ss-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 18px;
+    }
+
+    .super-settings-page .ss-navigation {
+        padding: 10px;
+    }
+
+    .super-settings-page .ss-nav-heading {
+        padding-bottom: 9px;
+    }
+
+    .super-settings-page .ss-nav-item {
+        padding: 10px;
+    }
+
+    .super-settings-page .ss-nav-icon {
+        width: 35px;
+        height: 35px;
+    }
+
+    .super-settings-page .ss-sidebar-note {
+        margin-top: 12px;
+    }
+
+    .super-settings-page .ss-section-heading h2 {
+        font-size: 21px;
+    }
+
+    .super-settings-page .ss-card {
+        padding: 18px;
+    }
+}
+
+/* =========================================
+   NARROW MOBILE
+========================================= */
+
+@media (max-width: 480px) {
+    .super-settings-page {
+        padding: 10px;
+    }
+
+    .super-settings-page .ss-header {
+        padding: 18px;
+        border-radius: 14px;
+    }
+
+    .super-settings-page .ss-header h1 {
+        font-size: 27px;
+    }
+
+    .super-settings-page .ss-header>div:first-child>p {
+        font-size: 12px;
+    }
+
+    .super-settings-page .ss-card {
+        padding: 15px;
+        border-radius: 13px;
+    }
+
+    .super-settings-page .ss-card-heading {
+        align-items: flex-start;
+        gap: 10px;
+        padding-bottom: 16px;
+        margin-bottom: 18px;
+    }
+
+    .super-settings-page .ss-card-icon {
+        width: 39px;
+        height: 39px;
+    }
+
+    .super-settings-page .ss-fields-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 15px;
+    }
+
+    .super-settings-page .ss-profile-summary {
+        align-items: flex-start;
+        padding: 13px;
+    }
+
+    .super-settings-page .ss-avatar {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+    }
+
+    .super-settings-page .ss-security-row {
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+
+    .super-settings-page .ss-coming-soon {
+        margin-left: 59px;
+    }
+
+    .super-settings-page .ss-user-option {
+        gap: 8px;
+        padding: 9px;
+    }
+
+    .super-settings-page .ss-user-avatar {
+        width: 33px;
+        height: 33px;
+    }
+
+    .super-settings-page .ss-user-info strong {
+        font-size: 11px;
+    }
+
+    .super-settings-page .ss-user-info small {
+        font-size: 10px;
+    }
+
+    .super-settings-page .ss-system-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .super-settings-page .ss-system-row>strong {
+        text-align: left;
+    }
+
+    .super-settings-page .ss-secondary-button,
+    .super-settings-page .ss-primary-button {
+        width: 100%;
+    }
+
+    .super-settings-page .ss-reset-form .ss-secondary-button {
+        align-self: stretch;
+    }
+}

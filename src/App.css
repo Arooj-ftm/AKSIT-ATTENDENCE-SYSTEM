@@ -1,61 +1,310 @@
+/* ========================================
+   APP LAYOUT
+======================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    color: #0f172a;
+    background: #f8fafc;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* ========================================
+   APPLICATION CONTAINER
+======================================== */
+
 .app {
     display: flex;
+    align-items: stretch;
+    width: 100%;
     height: 100vh;
+    min-height: 0;
     overflow: hidden;
+    background: #f8fafc;
 }
 
-.main {
-    flex: 1;
-    min-width: 0;
+/* ========================================
+   SIDEBAR
+======================================== */
+
+.app>aside,
+.app>.sidebar {
+    flex: 0 0 auto;
+    height: 100vh;
+    min-height: 0;
+    position: relative;
+    align-self: stretch;
+    overflow-x: hidden;
     overflow-y: auto;
-    padding: 20px;
+}
+
+/* ========================================
+   MAIN CONTENT
+======================================== */
+
+.app>.main,
+.main {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+    min-height: 0;
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    gap: 28px;
+    align-items: stretch;
+    gap: 24px;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: #f8fafc;
 }
 
-@media (min-width: 768px) {
-    .main {
-        padding: 32px;
-    }
+.app-page-content {
+    flex: 0 0 auto;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
-/* Header */
+.app-page-content>.attendance-page {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* ========================================
+   SHARED DARK HEADER
+/* SHARED DARK NAVY HEADER */
+
 .header {
+    flex: 0 0 auto;
+    width: 100%;
+    min-width: 0;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: 20px;
+    padding: 20px 24px;
+    margin: 0 0 24px;
+    background: #0f1b33;
+    color: #ffffff;
+    border: 1px solid #1c2b46;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(15, 27, 51, 0.12);
+}
+
+.header-identity {
+    flex: 1;
+    min-width: 0;
 }
 
 .header-title {
+    margin: 0;
+    color: #ffffff;
     font-size: 24px;
-    font-weight: 700;
-    color: #0f172a;
+    font-weight: 750;
+    line-height: 1.3;
+    letter-spacing: -0.4px;
 }
 
 .header-date {
-    font-size: 14px;
-    color: #94a3b8;
+    margin: 6px 0 0;
+    color: #cbd5e1;
+    font-size: 13px;
+    line-height: 1.5;
+    text-transform: capitalize;
 }
 
 .header-actions {
     display: flex;
+    flex: 0 0 auto;
     align-items: center;
-    gap: 12px;
+    justify-content: flex-end;
+    gap: 10px;
 }
+
+.header-refresh-btn,
+.header-logout-btn {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 16px;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 650;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.header-refresh-btn {
+    color: #ffffff;
+    background: #263754;
+    border: 1px solid #40516e;
+}
+
+.header-refresh-btn:hover:not(:disabled) {
+    background: #344866;
+    border-color: #61728e;
+}
+
+.header-refresh-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.header-logout-btn {
+    color: #0f1b33;
+    background: #ffffff;
+    border: 1px solid #ffffff;
+}
+
+.header-logout-btn:hover {
+    background: #e8edf5;
+    border-color: #e8edf5;
+}
+
+.header-refresh-btn:active:not(:disabled),
+.header-logout-btn:active {
+    transform: scale(0.98);
+}
+
+.header-refresh-spinning {
+    animation: header-refresh-spin 1s linear infinite;
+}
+
+@keyframes header-refresh-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 700px) {
+    .header {
+        align-items: flex-start;
+        padding: 17px;
+        gap: 14px;
+    }
+
+    .header-title {
+        font-size: 20px;
+    }
+
+    .header-actions {
+        gap: 7px;
+    }
+
+    .header-refresh-btn,
+    .header-logout-btn {
+        min-height: 38px;
+        padding: 0 10px;
+        gap: 6px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 460px) {
+    .header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .header-actions {
+        justify-content: flex-start;
+    }
+}
+
+
+/* ========================================
+   LOGOUT / PRIMARY APP BUTTON
+======================================== */
+
+.add-btn {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 40px;
+    padding: 10px 16px;
+
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 650;
+    line-height: 1.4;
+
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+    transition: background 0.2s ease, border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.add-btn:hover {
+    background: rgba(255, 255, 255, 0.19);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.add-btn:focus-visible {
+    outline: 3px solid #93c5fd;
+    outline-offset: 3px;
+}
+
+.add-btn:active {
+    transform: translateY(1px);
+}
+
+/* ========================================
+   SEARCH
+======================================== */
 
 .search {
     display: flex;
     align-items: center;
     gap: 8px;
+    min-width: 0;
     padding: 10px 16px;
     border: 1px solid #e2e8f0;
     border-radius: 12px;
-    background: #fff;
+    background: #ffffff;
     color: #94a3b8;
-    transition: .2s;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .search:focus-within {
@@ -65,68 +314,41 @@
 
 .search input {
     width: 176px;
+    min-width: 0;
     border: none;
     outline: none;
     background: transparent;
-    font-size: 14px;
     color: #0f172a;
+    font-size: 14px;
 }
 
 .search input::placeholder {
     color: #94a3b8;
 }
 
-@media (min-width: 768px) {
-    .search input {
-        width: 240px;
-    }
-}
+/* ========================================
+   GENERAL STATS GRID
+======================================== */
 
-.add-btn {
-    display: none;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    border-radius: 12px;
-    background: #2563eb;
-    color: #fff;
-    font-size: 14px;
-    font-weight: 600;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, .1);
-    transition: background .2s;
-}
-
-.add-btn:hover {
-    background: #1d4ed8;
-}
-
-@media (min-width: 640px) {
-    .add-btn {
-        display: flex;
-    }
-}
-
-/* Stat cards ka grid */
 .stats {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px;
+    width: 100%;
+    min-width: 0;
 }
 
-@media (min-width: 768px) {
-    .stats {
-        grid-template-columns: repeat(3, 1fr);
-    }
+.stats>* {
+    min-width: 0;
 }
 
-@media (min-width: 1280px) {
-    .stats {
-        grid-template-columns: repeat(5, 1fr);
-    }
-}
+/* ========================================
+   TEAM SECTION
+======================================== */
 
-/* Team members */
 .team {
+    width: 100%;
+    min-width: 0;
     scroll-margin-top: 24px;
 }
 
@@ -140,29 +362,32 @@
 }
 
 .team-title {
+    margin: 0;
+    color: #0f172a;
     font-size: 18px;
     font-weight: 600;
-    color: #0f172a;
 }
 
 .team-count {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 8px;
     margin-top: 2px;
 }
 
 .clear-tag {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 4px;
-    padding: 2px 8px;
+    padding: 4px 10px;
+    border: none;
     border-radius: 999px;
     background: #eff6ff;
     color: #1d4ed8;
     font-size: 12px;
     font-weight: 500;
-    transition: background .2s;
+    transition: background 0.2s ease;
 }
 
 .clear-tag:hover {
@@ -179,10 +404,10 @@
     padding: 6px 16px;
     border: 1px solid #e2e8f0;
     border-radius: 999px;
-    background: #fff;
+    background: #ffffff;
     color: #475569;
     font-size: 14px;
-    transition: .2s;
+    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
 
 .chip:hover {
@@ -190,39 +415,211 @@
 }
 
 .chip.on {
-    background: #0f1b33;
     border-color: #0f1b33;
-    color: #fff;
+    background: #0f1b33;
+    color: #ffffff;
     font-weight: 600;
 }
 
 .team-empty {
-    padding: 40px 0;
-    text-align: center;
+    padding: 40px 16px;
     color: #94a3b8;
+    text-align: center;
 }
 
 .team-grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 20px;
+    width: 100%;
+    min-width: 0;
     padding-bottom: 40px;
 }
 
+.team-grid>* {
+    min-width: 0;
+}
+
+/* ========================================
+   LOADING AND ERROR STATES
+======================================== */
+
+.app-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100vh;
+    padding: 24px;
+    background: #f8fafc;
+    color: #334155;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.attendance-app-message {
+    width: 100%;
+    padding: 20px;
+    border: 1px solid #fecaca;
+    border-radius: 12px;
+    background: #fef2f2;
+    color: #991b1b;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* ========================================
+   PAGE CONTENT LAYOUT
+======================================== */
+
+.app>.manager-employees-page {
+    flex: 1 1 auto;
+    width: 0;
+    min-width: 0;
+    min-height: 0;
+    height: auto;
+    overflow: visible;
+}
+
+.app>.main:has(.employee-leaves-page) {
+    gap: 24px;
+}
+
+/* ========================================
+   TABLET AND DESKTOP
+======================================== */
+
 @media (min-width: 640px) {
     .team-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 768px) {
+
+    .app>.main,
+    .main {
+        padding: 28px 32px;
+        gap: 28px;
+    }
+
+    .stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .search input {
+        width: 240px;
     }
 }
 
 @media (min-width: 1280px) {
+    .stats {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
     .team-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 
 @media (min-width: 1536px) {
     .team-grid {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 639px) {
+
+    .app>.main,
+    .main {
+        padding: 16px;
+        gap: 20px;
+    }
+
+    .header {
+        gap: 12px;
+        padding: 19px;
+        border-radius: 14px;
+    }
+
+    .header-title {
+        font-size: 21px;
+    }
+
+    .header-date {
+        font-size: 12px;
+    }
+
+    .add-btn {
+        padding: 9px 12px;
+        font-size: 12px;
+    }
+
+    .stats {
+        gap: 12px;
+    }
+
+    .team-head {
+        gap: 12px;
+    }
+
+    .team-grid {
+        gap: 14px;
+        padding-bottom: 24px;
+    }
+
+    .search {
+        width: 100%;
+    }
+
+    .search input {
+        width: 100%;
+    }
+}
+
+@media (max-width: 400px) {
+
+    .app>.main,
+    .main {
+        padding: 12px;
+        gap: 16px;
+    }
+
+    .header {
+        padding: 16px;
+    }
+
+    .header-title {
+        font-size: 19px;
+    }
+
+    .stats {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .chip {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+}
+
+/* ========================================
+   ACCESSIBILITY
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 }

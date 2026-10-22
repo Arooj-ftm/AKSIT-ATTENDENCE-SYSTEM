@@ -1,587 +1,787 @@
 
-import { useRef, useState } from "react";
-import { AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
 import {
-  Search,
-  Users,
-  UserCheck,
-  Plane,
-  Building2,
-  Laptop,
-  Plus,
-  X,
+  Eye,
+  EyeOff,
+  Lock,
+  ArrowRight,
+  ShieldCheck,
 } from "lucide-react";
 
-import { employees as initialEmployees } from "./data/employees";
-
+import SuperAdminSettings from "./admin/SuperAdminSettings";
 import Sidebar from "./components/Sidebar";
-import StatCard from "./components/StatCard";
-import EmployeeCard from "./components/EmployeeCard";
-import EmployeeModal from "./components/EmployeeModal";
-import AddEmployeeModal from "./components/AddEmployeeModal";
-import Notifications from "./components/Notifications";
-import Charts from "./components/Charts";
-import Calendar from "./components/Calendar";
-import Settings from "./components/Settings";
-import Tasks from "./components/Tasks";
-import Documents from "./components/Documents";
-import Attendance from "./components/Attendance";
 import Login from "./components/Login";
+import SuperAdminDashboard from "./admin/SuperAdminDashboard";
+import HREmployeeLeaves from "./hr/HREmployeeLeaves";
+import CompanyAttendance from "./hr/CompanyAttendance";
+import CTOAttendance from "./attendance/CTOAttendance";
+import CTOCompanyAttendance from "./cto/md/CTOCompanyAttendance";
+import CTOEmployees from "./cto/md/CTOEmployees";
+import CTOTasks from "./cto/md/CTOTasks";
+import Tasks from "./manager/Tasks";
+import CEOTasks from "./ceo/CEOTasks";
+import CEOAttendance from "./attendance/CEOAttendance";
+import EmployeeAttendance from "./attendance/EmployeeAttendance";
+import HRAttendance from "./attendance/HRAttendance";
+import ManagerAttendance from "./attendance/ManagerAttendance";
+import EmployeeTasks from "./employee/EmployeeTasks";
+import ManagerEmployees from "./manager/ManagerEmployees";
+import EmployeeLeaves from "./manager/EmployeeLeaves";
+import RoleSettings from "./components/RoleSettings";
+import { useAuth } from "./context/AuthContext";
+import { apiRequest } from "./api/api";
+import PageHeader from "./components/PageHeader";
+import CTOManagerProfiles from "./cto/md/CTOManagerProfiles";
+import CTODashboard from "./cto/md/CTODashboard";
 
 import "./App.css";
+import "./PasswordChangeScreen.css";
+
+const PAGE_TITLES = {
+  Dashboard: "CTO / Managing Director Dashboard",
+  Attendance: "Attendance",
+  Employees: "Employees",
+  "Employee Leaves": "Employee Leaves",
+  "Company Attendance": "Company Attendance",
+  "Manager Profiles": "Manager Profiles",
+  "Overall Progress": "Overall Progress",
+  Calendar: "Calendar",
+  "Tasks & Projects": "Tasks & Projects",
+  Documents: "Documents",
+  Settings: "Settings",
+  "Admin Dashboard": "Super Admin Dashboard",
+};
+
+const AVAILABLE_PAGES = [
+  "Dashboard",
+  "Attendance",
+  "Employees",
+  "Employee Leaves",
+  "Company Attendance",
+  "Manager Profiles",
+  "Overall Progress",
+  "Calendar",
+  "Tasks & Projects",
+  "Documents",
+  "Settings",
+  "Admin Dashboard",
+];
+
+const PAGES_WITH_OWN_HEADER = [
+  "Dashboard",
+  "Attendance",
+  "Employees",
+  "Employee Leaves",
+  "Company Attendance",
+  "Manager Profiles",
+  "Overall Progress",
+  "Tasks & Projects",
+  "Admin Dashboard",
+];
+
+function getSavedTheme() {
+  try {
+    return localStorage.getItem("app-theme") === "dark"
+      ? "dark"
+      : "light";
+  } catch {
+    return "light";
+  }
+}
+
+function PasswordChangeScreen({ user, onChangePassword, onLogout }) {
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (newPassword.length < 12) {
+      setError("New password must be at least 12 characters long.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError("New password and confirmation do not match.");
+      return;
+    }
+
+    if (currentPassword === newPassword) {
+      setError(
+        "Your new password must be different from your current password."
+      );
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      await onChangePassword({
+        currentPassword,
+        newPassword,
+      });
+
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+
+      setSuccess(
+        "Password changed successfully. Opening your workspace..."
+      );
+    } catch (requestError) {
+      setError(
+        requestError.message || "Unable to change your password."
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const isDisabled = submitting || Boolean(success);
+
+  return (
+    <main className="password-change-page">
+      <div
+        className="password-change-decoration password-change-decoration-one"
+        aria-hidden="true"
+      />
+
+      <div
+        className="password-change-decoration password-change-decoration-two"
+        aria-hidden="true"
+      />
+
+      <section className="password-change-card">
+        <div className="password-change-brand">
+          <img
+            src="/logo.png"
+            alt="Company logo"
+            className="password-change-logo"
+            onError={(event) => {
+              event.currentTarget.style.display = "none";
+            }}
+          />
+
+          <span className="password-change-brand-label">
+            WORKSPACE
+          </span>
+        </div>
+
+        <div className="password-change-heading">
+          <span className="password-change-eyebrow">
+            ACCOUNT SECURITY
+          </span>
+
+          <h1>Change your password</h1>
+
+          <p>
+            Welcome, {user?.name || user?.email || "User"}.
+            Before continuing to your workspace, please create
+            a new password to keep your account secure.
+          </p>
+        </div>
+
+        <div className="password-change-notice">
+          <ShieldCheck size={19} aria-hidden="true" />
+
+          <p>
+            You are using a temporary password. Set a new
+            password to continue.
+          </p>
+        </div>
+
+        <form
+          className="password-change-form"
+          onSubmit={handleSubmit}
+          noValidate
+        >
+          <label htmlFor="current-password">
+            Current password
+          </label>
+
+          <div className="password-change-input-wrap">
+            <Lock size={18} aria-hidden="true" />
+
+            <input
+              id="current-password"
+              name="currentPassword"
+              type={showCurrentPassword ? "text" : "password"}
+              placeholder="Enter current password"
+              autoComplete="current-password"
+              value={currentPassword}
+              onChange={(event) => {
+                setCurrentPassword(event.target.value);
+                setError("");
+              }}
+              required
+              disabled={isDisabled}
+            />
+
+            <button
+              type="button"
+              className="password-change-toggle"
+              onClick={() =>
+                setShowCurrentPassword((current) => !current)
+              }
+              aria-label={
+                showCurrentPassword
+                  ? "Hide current password"
+                  : "Show current password"
+              }
+              disabled={isDisabled}
+            >
+              {showCurrentPassword ? (
+                <EyeOff size={18} />
+              ) : (
+                <Eye size={18} />
+              )}
+            </button>
+          </div>
+
+          <label htmlFor="new-password">
+            New password
+          </label>
+
+          <div className="password-change-input-wrap">
+            <Lock size={18} aria-hidden="true" />
+
+            <input
+              id="new-password"
+              name="newPassword"
+              type={showNewPassword ? "text" : "password"}
+              placeholder="Create a new password"
+              autoComplete="new-password"
+              value={newPassword}
+              onChange={(event) => {
+                setNewPassword(event.target.value);
+                setError("");
+              }}
+              minLength={12}
+              required
+              disabled={isDisabled}
+            />
+
+            <button
+              type="button"
+              className="password-change-toggle"
+              onClick={() =>
+                setShowNewPassword((current) => !current)
+              }
+              aria-label={
+                showNewPassword
+                  ? "Hide new password"
+                  : "Show new password"
+              }
+              disabled={isDisabled}
+            >
+              {showNewPassword ? (
+                <EyeOff size={18} />
+              ) : (
+                <Eye size={18} />
+              )}
+            </button>
+          </div>
+
+          <p className="password-change-hint">
+            Use at least 12 characters for your new password.
+          </p>
+
+          <label htmlFor="confirm-password">
+            Confirm new password
+          </label>
+
+          <div className="password-change-input-wrap">
+            <Lock size={18} aria-hidden="true" />
+
+            <input
+              id="confirm-password"
+              name="confirmPassword"
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="Re-enter your new password"
+              autoComplete="new-password"
+              value={confirmPassword}
+              onChange={(event) => {
+                setConfirmPassword(event.target.value);
+                setError("");
+              }}
+              minLength={12}
+              required
+              disabled={isDisabled}
+            />
+
+            <button
+              type="button"
+              className="password-change-toggle"
+              onClick={() =>
+                setShowConfirmPassword((current) => !current)
+              }
+              aria-label={
+                showConfirmPassword
+                  ? "Hide confirmation password"
+                  : "Show confirmation password"
+              }
+              disabled={isDisabled}
+            >
+              {showConfirmPassword ? (
+                <EyeOff size={18} />
+              ) : (
+                <Eye size={18} />
+              )}
+            </button>
+          </div>
+
+          {error && (
+            <div
+              className="password-change-message password-change-error"
+              role="alert"
+            >
+              {error}
+            </div>
+          )}
+
+          {success && (
+            <div
+              className="password-change-message password-change-success"
+              role="status"
+            >
+              {success}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            className="password-change-submit"
+            disabled={isDisabled}
+          >
+            {submitting ? (
+              "Changing password..."
+            ) : success ? (
+              "Password changed"
+            ) : (
+              <>
+                Change password
+                <ArrowRight size={18} aria-hidden="true" />
+              </>
+            )}
+          </button>
+        </form>
+
+        <div className="password-change-footer">
+          <ShieldCheck size={16} aria-hidden="true" />
+          <span>Secure company workspace</span>
+        </div>
+
+        <button
+          type="button"
+          className="password-change-logout"
+          onClick={onLogout}
+          disabled={submitting}
+        >
+          Log out of your account
+        </button>
+      </section>
+
+      <p className="password-change-copyright">
+        © {new Date().getFullYear()} Your Company. All rights reserved.
+      </p>
+    </main>
+  );
+}
 
 export default function App() {
-  /* =========================
-     LOGIN
-  ========================= */
+  const {
+    user,
+    loading,
+    acceptSession,
+    logout,
+    changePassword,
+  } = useAuth();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [page, setPage] = useState("Attendance");
+  const [settingsSection, setSettingsSection] = useState("profile");
+  const [theme, setTheme] = useState(getSavedTheme);
 
-  /* =========================
-     TEAM
-  ========================= */
+  const currentRole = String(user?.role || "employee")
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_");
 
-  const [team, setTeam] = useState(initialEmployees);
+  const mustChangePassword = user?.mustChangePassword === true;
 
-  /* =========================
-     DASHBOARD
-  ========================= */
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.body.dataset.theme = theme;
 
-  const [q, setQ] = useState("");
-  const [dept, setDept] = useState("All");
-  const [statusFilter, setStatusFilter] = useState("All");
+    try {
+      localStorage.setItem("app-theme", theme);
+    } catch {
+      // The selected theme still applies during this session.
+    }
+  }, [theme]);
 
-  /* =========================
-     SETTINGS
-  ========================= */
+  const handleThemeChange = (nextTheme) => {
+    if (nextTheme !== "light" && nextTheme !== "dark") {
+      return;
+    }
 
-  const [settingsRole, setSettingsRole] = useState("employee");
-  const [settingsSection, setSettingsSection] = useState(null);
-
-  /* =========================
-     TASKS
-  ========================= */
-
-  const [tasksRole, setTasksRole] = useState("manager");
-
-  /* =========================
-     ATTENDANCE
-  ========================= */
-
-  const [attendanceRole, setAttendanceRole] = useState("employee");
-
-  /* =========================
-     CALENDAR / DOCUMENTS
-  ========================= */
-
-  const [interviewEvents, setInterviewEvents] = useState([]);
-
-  /* =========================
-     EMPLOYEE MODAL
-  ========================= */
-
-  const [selected, setSelected] = useState(null);
-  const [showAdd, setShowAdd] = useState(false);
-
-  /* =========================
-     NOTIFICATIONS
-  ========================= */
-
-  const [notes, setNotes] = useState([]);
-  const [unread, setUnread] = useState(true);
-
-  /* =========================
-     CURRENT PAGE
-  ========================= */
-
-  const [page, setPage] = useState("dashboard");
-
-  /* =========================
-     REFS
-  ========================= */
-
-  const mainRef = useRef(null);
-  const teamRef = useRef(null);
-
-  /* =========================
-     DEPARTMENTS
-  ========================= */
-
-  const departments = [
-    ...new Set(team.map((employee) => employee.department)),
-  ];
-
-  const depts = ["All", ...departments];
-
-  /* =========================
-     EMPLOYEE FILTER
-  ========================= */
-
-  const list = team.filter(
-    (employee) =>
-      (dept === "All" || employee.department === dept) &&
-      (statusFilter === "All" || employee.status === statusFilter) &&
-      (employee.name + employee.role)
-        .toLowerCase()
-        .includes(q.toLowerCase())
-  );
-
-  /* =========================
-     HELPERS
-  ========================= */
-
-  const count = (status) =>
-    team.filter((employee) => employee.status === status).length;
-
-  const pct = (number) =>
-    team.length
-      ? Math.round((number / team.length) * 100)
-      : 0;
-
-  const today = new Date().toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
-
-  /* =========================
-     NOTIFICATIONS
-  ========================= */
-
-  const alerts = [
-    ...notes,
-
-    ...team
-      .filter((employee) => employee.status === "On Leave")
-      .map((employee) => ({
-        title: `${employee.name} is on leave`,
-        text: `${employee.role} · ${employee.department}`,
-        tone: "amber",
-      })),
-
-    ...(count("Remote") > 0
-      ? [
-        {
-          title: `${count("Remote")} employees working remotely`,
-          text: "Use the Remote card to see who",
-          tone: "sky",
-        },
-      ]
-      : []),
-  ];
-
-  /* =========================
-     SCROLL TO TEAM
-  ========================= */
-
-  const scrollToTeam = () =>
-    setTimeout(() => {
-      teamRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }, 50);
-
-  /* =========================
-     STATUS FILTER
-  ========================= */
-
-  const pickStatus = (status) => {
-    setStatusFilter((current) =>
-      current === status ? "All" : status
-    );
-
-    setDept("All");
-    setQ("");
-
-    scrollToTeam();
+    setTheme(nextTheme);
   };
 
-  /* =========================
-     RESET FILTERS
-  ========================= */
+  useEffect(() => {
+    if (user && !mustChangePassword) {
+      if (
+        currentRole === "super_admin" ||
+        currentRole === "superuser"
+      ) {
+        setPage("Admin Dashboard");
+      } else if (currentRole === "cto_md") {
+        setPage("Dashboard");
+      } else {
+        setPage("Attendance");
+      }
+    }
+  }, [user, currentRole, mustChangePassword]);
 
-  const resetAll = () => {
-    setStatusFilter("All");
-    setDept("All");
-    setQ("");
+  const canAccessPage = (label) => {
+    if (!AVAILABLE_PAGES.includes(label)) {
+      return false;
+    }
 
-    scrollToTeam();
+    switch (label) {
+      case "Dashboard":
+      case "Manager Profiles":
+      case "Overall Progress":
+        return currentRole === "cto_md";
+
+      case "Employees":
+        return ["manager", "cto_md"].includes(currentRole);
+
+      case "Employee Leaves":
+        return ["manager", "hr"].includes(currentRole);
+
+      case "Company Attendance":
+        return ["hr", "ceo", "cto_md"].includes(currentRole);
+
+      case "Tasks & Projects":
+        return [
+          "employee",
+          "manager",
+          "hr",
+          "ceo",
+          "admin",
+          "super_admin",
+          "superuser",
+          "cto_md",
+        ].includes(currentRole);
+
+      case "Admin Dashboard":
+        return ["super_admin", "superuser"].includes(currentRole);
+
+      default:
+        return true;
+    }
   };
-
-  /* =========================
-     INTERVIEW
-  ========================= */
-
-  const addInterview = (event) => {
-    setInterviewEvents((current) => [
-      ...current.filter((item) => item.id !== event.id),
-      event,
-    ]);
-  };
-
-  /* =========================
-     SIDEBAR NAVIGATION
-  ========================= */
 
   const handleNav = (label) => {
-    if (label === "Calendar") {
-      setPage("calendar");
-      return;
-    }
-
-    if (label === "Attendance") {
-      setPage("attendance");
-      return;
-    }
-
-    if (label === "Documents") {
-      setPage("documents");
-      return;
-    }
-
-    if (label === "Tasks & Projects") {
-      setPage("tasks");
+    if (!canAccessPage(label)) {
       return;
     }
 
     if (label === "Settings") {
-      setSettingsSection(null);
-      setPage("settings");
-      return;
+      setSettingsSection("profile");
     }
 
-    setPage("dashboard");
-
-    setTimeout(() => {
-      if (label === "Overview") {
-        mainRef.current?.scrollTo({
-          top: 0,
-          behavior: "smooth",
-        });
-      }
-
-      if (label === "Employees") {
-        teamRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      }
-    }, 120);
+    setPage(label);
   };
 
-  /* =========================
-     SETTINGS SECTION
-  ========================= */
-
-  const handleSection = (id) => {
-    setPage("settings");
-
-    setSettingsSection({
-      id,
-      n: Date.now(),
-    });
+  const handleSettingsSection = (section) => {
+    setSettingsSection(section);
   };
 
-  /* =========================
-     TASK ROLE
-  ========================= */
+  const renderAttendancePage = () => {
+    switch (currentRole) {
+      case "employee":
+        return <EmployeeAttendance role={currentRole} />;
 
-  const handleTasksRoleChange = (role) => {
-    setTasksRole(role);
-    setPage("tasks");
+      case "manager":
+        return <ManagerAttendance role={currentRole} />;
+
+      case "hr":
+        return <HRAttendance role={currentRole} />;
+
+      case "cto_md":
+        return <CTOAttendance />;
+
+      case "ceo":
+      case "admin":
+      case "super_admin":
+      case "superuser":
+        return <CEOAttendance role={currentRole} />;
+
+      default:
+        return (
+          <div className="attendance-app-message" role="alert">
+            Your account role is not recognized. Please contact
+            your system administrator.
+          </div>
+        );
+    }
   };
 
-  /* =========================
-     ATTENDANCE ROLE
-  ========================= */
+  const renderPage = () => {
+    switch (page) {
+      case "Dashboard":
+        if (currentRole === "cto_md") {
+          return <CTODashboard />;
+        }
 
-  const handleAttendanceRoleChange = (role) => {
-    setAttendanceRole(role);
+        return (
+          <div className="attendance-app-message">
+            <h2>Dashboard</h2>
+            <p>This dashboard is not available for this role.</p>
+          </div>
+        );
+
+      case "Manager Profiles":
+        if (currentRole === "cto_md") {
+          return <CTOManagerProfiles />;
+        }
+
+        return (
+          <div className="attendance-app-message" role="alert">
+            <h2>Access Denied</h2>
+            <p>
+              This page is only available to the CTO / Managing Director.
+            </p>
+          </div>
+        );
+
+      case "Overall Progress":
+        if (currentRole === "cto_md") {
+          return (
+            <div className="attendance-app-message">
+              <h2>Overall Progress</h2>
+              <p>This page has not been connected yet.</p>
+            </div>
+          );
+        }
+
+        return (
+          <div className="attendance-app-message" role="alert">
+            <h2>Access Denied</h2>
+            <p>This page is only available to the CTO / Managing Director.</p>
+          </div>
+        );
+
+      case "Admin Dashboard":
+        if (
+          ["super_admin", "superuser"].includes(currentRole)
+        ) {
+          return <SuperAdminDashboard />;
+        }
+
+        return (
+          <div className="attendance-app-message" role="alert">
+            <h2>Access Denied</h2>
+            <p>
+              The Super Admin Dashboard is only available to
+              Super Admin.
+            </p>
+          </div>
+        );
+
+      case "Attendance":
+        return renderAttendancePage();
+
+      case "Tasks & Projects":
+        switch (currentRole) {
+          case "employee":
+            return <EmployeeTasks />;
+
+          case "manager":
+            return <Tasks />;
+
+          case "hr":
+            return (
+              <div className="attendance-app-message">
+                <h2>HR Tasks &amp; Projects</h2>
+                <p>
+                  The HR task monitoring page has not been
+                  connected yet.
+                </p>
+              </div>
+            );
+
+          case "cto_md":
+            return <CTOTasks />;
+
+          case "ceo":
+          case "admin":
+          case "super_admin":
+          case "superuser":
+            return <CEOTasks />;
+
+          default:
+            return (
+              <div className="attendance-app-message" role="alert">
+                Your account role is not recognized.
+              </div>
+            );
+        }
+
+      case "Settings":
+        if (
+          currentRole === "super_admin" ||
+          currentRole === "superuser"
+        ) {
+          return <SuperAdminSettings />;
+        }
+
+        return (
+          <RoleSettings
+            role={currentRole}
+            section={settingsSection}
+            theme={theme}
+            onThemeChange={handleThemeChange}
+          />
+        );
+
+      case "Employees":
+        if (currentRole === "manager") {
+          return <ManagerEmployees />;
+        }
+
+        if (currentRole === "cto_md") {
+          return <CTOEmployees />;
+        }
+
+        return (
+          <div className="attendance-app-message" role="alert">
+            <h2>Access Denied</h2>
+            <p>
+              Employees is only available to managers and the
+              CTO / Managing Director.
+            </p>
+          </div>
+        );
+
+      case "Employee Leaves":
+        if (currentRole === "hr") {
+          return <HREmployeeLeaves />;
+        }
+
+        if (currentRole === "manager") {
+          return <EmployeeLeaves />;
+        }
+
+        return (
+          <div className="attendance-app-message" role="alert">
+            <h2>Access Denied</h2>
+            <p>You do not have access to this page.</p>
+          </div>
+        );
+
+      case "Company Attendance":
+        if (currentRole === "hr") {
+          return <CompanyAttendance />;
+        }
+
+        if (currentRole === "cto_md") {
+          return <CTOCompanyAttendance />;
+        }
+
+        if (currentRole === "ceo") {
+          return <CEOAttendance role={currentRole} />;
+        }
+
+        return (
+          <div className="attendance-app-message" role="alert">
+            <h2>Access Denied</h2>
+            <p>
+              Company-wide attendance is only available to
+              authorized roles.
+            </p>
+          </div>
+        );
+
+      default:
+        return (
+          <div className="attendance-app-message">
+            <h2>{PAGE_TITLES[page] || page}</h2>
+            <p>This page has not been connected yet.</p>
+          </div>
+        );
+    }
   };
 
-  /* =========================
-     ADD EMPLOYEE
-  ========================= */
-
-  const addEmployee = (form) => {
-    const id =
-      team.length > 0
-        ? Math.max(...team.map((employee) => employee.id)) + 1
-        : 1;
-
-    const first = form.name
-      .trim()
-      .split(" ")[0]
-      .toLowerCase();
-
-    const skills = form.skills
-      .split(",")
-      .map((skill) => skill.trim())
-      .filter(Boolean);
-
-    const employee = {
-      id,
-      code: `AG-${1000 + id}`,
-      name: form.name.trim(),
-      role: form.role.trim(),
-      department: form.department,
-      status: form.status,
-      city: form.city.trim(),
-
-      joined: new Date().toLocaleDateString("en-US", {
-        month: "short",
-        year: "numeric",
-      }),
-
-      skills: skills.length > 0 ? skills : ["New joiner"],
-
-      salary: `$${Number(form.salary).toLocaleString()}`,
-
-      email: `${first}@aksitglobal.com`,
-
-      phone: `+92 30${id % 10} ${1234000 + id * 137}`,
-    };
-
-    setTeam((current) => [...current, employee]);
-
-    setNotes((current) => [
-      {
-        title: `${employee.name} joined the team`,
-        text: `${employee.role} · ${employee.department}`,
-        tone: "blue",
-      },
-      ...current,
-    ]);
-
-    setUnread(true);
-    setShowAdd(false);
-    resetAll();
-  };
-
-  /* =========================
-     SHOW LOGIN FIRST
-  ========================= */
-
-  if (!isLoggedIn) {
+  if (loading) {
     return (
-      <Login
-        onLogin={() => {
-          setIsLoggedIn(true);
-        }}
+      <div className="app-loading" role="status">
+        Loading your account...
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Login onLogin={acceptSession} />;
+  }
+
+  if (mustChangePassword) {
+    return (
+      <PasswordChangeScreen
+        user={user}
+        onChangePassword={changePassword}
+        onLogout={logout}
       />
     );
   }
 
-  /* =========================
-     MAIN WEBSITE
-  ========================= */
+  const settingsHasOwnHeader =
+    page === "Settings" && currentRole !== "super_admin";
+
+  const showGlobalHeader =
+    !PAGES_WITH_OWN_HEADER.includes(page) &&
+    !settingsHasOwnHeader;
 
   return (
-    <div className="app">
+    <div className="app" data-theme={theme}>
       <Sidebar
         onNavigate={handleNav}
-        onSection={handleSection}
-        settingsRole={settingsRole}
+        onSection={handleSettingsSection}
+        settingsRole={currentRole}
+        onLogout={logout}
       />
 
-      {page === "calendar" ? (
-        <Calendar
-          team={team}
-          extraEvents={interviewEvents}
-        />
-      ) : page === "attendance" ? (
-        <Attendance
-          team={team}
-          role={attendanceRole}
-          onRoleChange={handleAttendanceRoleChange}
-        />
-      ) : page === "documents" ? (
-        <Documents
-          team={team}
-          onInterview={addInterview}
-        />
-      ) : page === "tasks" ? (
-        <Tasks
-          team={team}
-          role={tasksRole}
-          onRoleChange={setTasksRole}
-        />
-      ) : page === "settings" ? (
-        <Settings
-          team={team}
-          role={settingsRole}
-          onRoleChange={setSettingsRole}
-          section={settingsSection}
-        />
-      ) : (
-        <main ref={mainRef} className="main">
+      <main className="main">
+        {showGlobalHeader && (
           <header className="header">
             <div>
-              <h1 className="header-title">Team overview</h1>
-              <p className="header-date">{today}</p>
-            </div>
+              <h1 className="header-title">
+                {PAGE_TITLES[page] || page}
+              </h1>
 
-            <div className="header-actions">
-              <div className="search">
-                <Search size={16} />
-
-                <input
-                  value={q}
-                  onChange={(event) => setQ(event.target.value)}
-                  placeholder="Search by name or role"
-                />
-              </div>
-
-              <Notifications
-                items={alerts}
-                unread={unread}
-                onOpen={() => setUnread(false)}
-              />
-
-              <button
-                onClick={() => setShowAdd(true)}
-                className="add-btn"
-              >
-                <Plus size={16} />
-                Add employee
-              </button>
+              <p className="header-date">
+                {user.name || user.email || "User"} · {currentRole}
+              </p>
             </div>
           </header>
+        )}
 
-          <section className="stats">
-            <StatCard
-              icon={Users}
-              label="Total employees"
-              value={team.length}
-              hint="Across the company"
-              tint="blue"
-              delay={0}
-              onClick={resetAll}
-              selected={
-                statusFilter === "All" &&
-                dept === "All" &&
-                !q
-              }
-            />
-
-            <StatCard
-              icon={UserCheck}
-              label="Active"
-              value={count("Active")}
-              hint={`${pct(count("Active"))}% working on site`}
-              tint="green"
-              delay={0.08}
-              onClick={() => pickStatus("Active")}
-              selected={statusFilter === "Active"}
-            />
-
-            <StatCard
-              icon={Laptop}
-              label="Remote"
-              value={count("Remote")}
-              hint={`${pct(count("Remote"))}% working remotely`}
-              tint="sky"
-              delay={0.16}
-              onClick={() => pickStatus("Remote")}
-              selected={statusFilter === "Remote"}
-            />
-
-            <StatCard
-              icon={Plane}
-              label="On leave"
-              value={count("On Leave")}
-              hint={`${pct(count("On Leave"))}% away from work`}
-              tint="amber"
-              delay={0.24}
-              onClick={() => pickStatus("On Leave")}
-              selected={statusFilter === "On Leave"}
-            />
-
-            <StatCard
-              icon={Building2}
-              label="Departments"
-              value={departments.length}
-              hint="Teams in the company"
-              tint="indigo"
-              delay={0.32}
-              onClick={scrollToTeam}
-            />
-          </section>
-
-          <Charts employees={team} />
-
-          <section ref={teamRef} className="team">
-            <div className="team-head">
-              <div>
-                <h2 className="team-title">Team members</h2>
-
-                <div className="team-count">
-                  <p className="muted">
-                    Showing {list.length} of {team.length}
-                  </p>
-
-                  {statusFilter !== "All" && (
-                    <button
-                      onClick={() => setStatusFilter("All")}
-                      className="clear-tag"
-                    >
-                      Status: {statusFilter}
-                      <X size={12} />
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              <div className="chips">
-                {depts.map((department) => (
-                  <button
-                    key={department}
-                    onClick={() => setDept(department)}
-                    className={`chip ${dept === department ? "on" : ""
-                      }`}
-                  >
-                    {department}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {list.length === 0 && (
-              <p className="team-empty">
-                No one matches these filters. Clear a filter or try a
-                different name.
-              </p>
-            )}
-
-            <div className="team-grid">
-              <AnimatePresence>
-                {list.map((employee, index) => (
-                  <EmployeeCard
-                    key={employee.id}
-                    emp={employee}
-                    index={index}
-                    onClick={() => setSelected(employee)}
-                  />
-                ))}
-              </AnimatePresence>
-            </div>
-          </section>
-        </main>
-      )}
-
-      <EmployeeModal
-        emp={selected}
-        onClose={() => setSelected(null)}
-      />
-
-      <AddEmployeeModal
-        open={showAdd}
-        departments={departments}
-        onClose={() => setShowAdd(false)}
-        onSave={addEmployee}
-      />
+        <section className="app-page-content">
+          {renderPage()}
+        </section>
+      </main>
     </div>
   );
 }

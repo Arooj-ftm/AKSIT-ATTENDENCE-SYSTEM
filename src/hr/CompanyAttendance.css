@@ -1,0 +1,560 @@
+/* =========================================
+   COMPANY ATTENDANCE PAGE
+========================================= */
+
+.company-attendance-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+    color: var(--text-primary, #172033);
+}
+
+/* =========================================
+   SHARED PAGE HEADER SPACING
+========================================= */
+
+.company-attendance-page>.page-header {
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 8px;
+}
+
+/* =========================================
+   ERROR MESSAGE
+========================================= */
+
+.company-attendance-page .company-attendance-error {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border: 1px solid #fecaca;
+    border-radius: 12px;
+    color: #b91c1c;
+    background: #fef2f2;
+    font-size: 13px;
+}
+
+.company-attendance-error span {
+    flex: 1;
+    min-width: 0;
+}
+
+.company-attendance-error button {
+    padding: 7px 11px;
+    border: 1px solid #fca5a5;
+    border-radius: 8px;
+    color: #991b1b;
+    background: #fff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.company-attendance-error button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* =========================================
+   ATTENDANCE STATISTICS
+========================================= */
+
+.company-attendance-stats {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.company-attendance-stats .attendance-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-width: 0;
+    padding: 19px;
+    border: 1px solid var(--border-color, #e8ecf3);
+    border-radius: 16px;
+    background: var(--card-bg, #fff);
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.035);
+}
+
+.company-stat-icon {
+    width: 43px;
+    height: 43px;
+    flex: 0 0 43px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+}
+
+.company-stat-icon.total {
+    color: #243b60;
+    background: #e8eef9;
+}
+
+.company-stat-icon.present {
+    color: #15803d;
+    background: #dcfce7;
+}
+
+.company-stat-icon.working {
+    color: #0369a1;
+    background: #e0f2fe;
+}
+
+.company-stat-icon.leave {
+    color: #b45309;
+    background: #fef3c7;
+}
+
+.company-stat-icon.absent {
+    color: #b91c1c;
+    background: #fee2e2;
+}
+
+.company-attendance-stats .attendance-stat-card p {
+    margin: 0 0 6px;
+    color: var(--text-secondary, #667085);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.company-attendance-stats .attendance-stat-card h3 {
+    margin: 0;
+    color: var(--text-primary, #172033);
+    font-size: 25px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+/* =========================================
+   ATTENDANCE SECTION
+========================================= */
+
+.company-attendance-section {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--border-color, #e8ecf3);
+    border-radius: 17px;
+    background: var(--card-bg, #fff);
+}
+
+.company-attendance-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+    padding: 22px 22px 18px;
+}
+
+.company-attendance-toolbar .attendance-section-heading {
+    margin: 0;
+    color: var(--text-primary, #172033);
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.company-attendance-subtitle {
+    margin: 6px 0 0;
+    color: var(--text-secondary, #667085);
+    font-size: 13px;
+}
+
+/* =========================================
+   DATE PICKER
+========================================= */
+
+.company-attendance-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 42px;
+    padding: 0 11px;
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 11px;
+    color: var(--text-secondary, #667085);
+    background: var(--card-bg, #fff);
+}
+
+.company-attendance-date-label {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.company-attendance-date input {
+    max-width: 145px;
+    min-width: 0;
+    border: none;
+    outline: none;
+    color: var(--text-primary, #172033);
+    background: transparent;
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+/* =========================================
+   SEARCH AND FILTERS
+========================================= */
+
+.company-attendance-filters {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 22px 18px;
+}
+
+.company-attendance-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+    min-height: 43px;
+    padding: 0 13px;
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 11px;
+    color: var(--text-secondary, #98a2b3);
+    background: var(--input-bg, #fff);
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.company-attendance-search:focus-within {
+    border-color: #526580;
+    box-shadow: 0 0 0 3px rgba(36, 59, 96, 0.09);
+}
+
+.company-attendance-search input {
+    width: 100%;
+    min-width: 0;
+    border: none;
+    outline: none;
+    color: var(--text-primary, #172033);
+    background: transparent;
+    font: inherit;
+    font-size: 13px;
+}
+
+.company-attendance-search input::placeholder {
+    color: var(--text-secondary, #98a2b3);
+}
+
+.company-attendance-status-filter {
+    min-height: 43px;
+    max-width: 180px;
+    padding: 0 32px 0 12px;
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 11px;
+    outline: none;
+    color: var(--text-primary, #172033);
+    background: var(--card-bg, #fff);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.company-attendance-status-filter:focus {
+    border-color: #526580;
+}
+
+/* =========================================
+   ATTENDANCE TABLE
+========================================= */
+
+.company-attendance-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.company-attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.company-attendance-table thead {
+    background: var(--table-header-bg, #f8fafc);
+}
+
+.company-attendance-table th {
+    padding: 14px 18px;
+    border-top: 1px solid var(--border-color, #edf0f5);
+    border-bottom: 1px solid var(--border-color, #edf0f5);
+    color: var(--text-secondary, #667085);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.45px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.company-attendance-table td {
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--border-color, #edf0f5);
+    color: var(--text-primary, #344054);
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.company-attendance-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.company-attendance-table tbody tr {
+    transition: background 0.15s ease;
+}
+
+.company-attendance-table tbody tr:hover {
+    background: var(--hover-bg, #fafbff);
+}
+
+/* =========================================
+   EMPLOYEE INFORMATION
+========================================= */
+
+.company-employee-cell {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 190px;
+}
+
+.company-employee-avatar {
+    width: 39px;
+    height: 39px;
+    flex: 0 0 39px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    color: #243b60;
+    background: #e8eef9;
+    font-size: 15px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.company-employee-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.company-employee-info strong {
+    color: var(--text-primary, #172033);
+    font-size: 13px;
+    font-weight: 750;
+}
+
+.company-employee-info span,
+.company-employee-info small {
+    color: var(--text-secondary, #667085);
+    font-size: 11px;
+    overflow-wrap: anywhere;
+}
+
+.company-employee-info small {
+    color: #435b83;
+}
+
+/* =========================================
+   ATTENDANCE STATUS BADGES
+========================================= */
+
+.company-attendance-table .attendance-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 750;
+    white-space: nowrap;
+}
+
+.company-attendance-table .attendance-status.present {
+    color: #166534;
+    background: #dcfce7;
+}
+
+.company-attendance-table .attendance-status.working {
+    color: #075985;
+    background: #e0f2fe;
+}
+
+.company-attendance-table .attendance-status.absent {
+    color: #b91c1c;
+    background: #fee2e2;
+}
+
+.company-attendance-table .attendance-status.leave {
+    color: #92400e;
+    background: #fef3c7;
+}
+
+.company-attendance-table .attendance-status.neutral {
+    color: #475569;
+    background: #f1f5f9;
+}
+
+.company-status-dot {
+    width: 6px;
+    height: 6px;
+    flex: 0 0 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+/* =========================================
+   EMPTY STATE AND LOADING
+========================================= */
+
+.company-attendance-table .attendance-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 180px;
+    padding: 28px;
+    color: var(--text-secondary, #667085);
+    text-align: center;
+}
+
+.company-attendance-table .attendance-empty strong {
+    color: var(--text-primary, #344054);
+    font-size: 14px;
+}
+
+.company-attendance-table .attendance-empty span {
+    font-size: 12px;
+}
+
+.company-attendance-page .attendance-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 11px;
+    min-height: 180px;
+    color: var(--text-secondary, #667085);
+    font-size: 13px;
+}
+
+.company-attendance-page .company-attendance-spinning {
+    animation: company-attendance-spin 1s linear infinite;
+}
+
+@keyframes company-attendance-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.company-attendance-footer {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 13px 22px;
+    border-top: 1px solid var(--border-color, #edf0f5);
+    color: var(--text-secondary, #667085);
+    font-size: 12px;
+}
+
+.company-attendance-footer svg {
+    color: #16a34a;
+    flex: 0 0 auto;
+}
+
+/* =========================================
+   RESPONSIVE — TABLETS
+========================================= */
+
+@media (max-width: 1200px) {
+    .company-attendance-stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* =========================================
+   RESPONSIVE — MOBILE
+========================================= */
+
+@media (max-width: 760px) {
+    .company-attendance-page {
+        gap: 18px;
+    }
+
+    .company-attendance-page>.page-header {
+        margin-bottom: 2px;
+    }
+
+    .company-attendance-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 11px;
+    }
+
+    .company-attendance-stats .attendance-stat-card {
+        gap: 10px;
+        padding: 14px;
+    }
+
+    .company-stat-icon {
+        width: 37px;
+        height: 37px;
+        flex-basis: 37px;
+    }
+
+    .company-attendance-stats .attendance-stat-card h3 {
+        font-size: 22px;
+    }
+
+    .company-attendance-toolbar {
+        align-items: flex-start;
+        padding: 18px 15px 15px;
+    }
+
+    .company-attendance-filters {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 0 15px 15px;
+    }
+
+    .company-attendance-status-filter {
+        max-width: none;
+        width: 100%;
+    }
+
+    .company-attendance-table th,
+    .company-attendance-table td {
+        padding: 13px 14px;
+    }
+}
+
+/* =========================================
+   RESPONSIVE — SMALL PHONES
+========================================= */
+
+@media (max-width: 420px) {
+    .company-attendance-stats .attendance-stat-card {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .company-attendance-date {
+        width: 100%;
+        box-sizing: border-box;
+        justify-content: space-between;
+    }
+
+    .company-attendance-date input {
+        max-width: 135px;
+    }
+}

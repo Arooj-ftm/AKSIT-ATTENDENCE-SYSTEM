@@ -1,0 +1,1076 @@
+/* =========================================
+   EMPLOYEE LEAVES PAGE
+========================================= */
+
+.employee-leaves-page {
+    --el-bg: #f5f7fb;
+    --el-card: #ffffff;
+    --el-text: #172033;
+    --el-muted: #758096;
+    --el-border: #e5eaf2;
+    --el-primary: #5368e8;
+    --el-primary-light: #edf0ff;
+
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    padding: 28px;
+    background: var(--el-bg);
+    color: var(--el-text);
+}
+
+.employee-leaves-page *,
+.employee-leaves-page *::before,
+.employee-leaves-page *::after {
+    box-sizing: border-box;
+}
+
+/* =========================================
+   SHARED PAGE HEADER
+========================================= */
+
+.employee-leaves-page>.page-header {
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+/* =========================================
+   GENERAL BUTTONS
+========================================= */
+
+.el-primary-button,
+.el-danger-button,
+.el-secondary-button,
+.el-clear-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 40px;
+    padding: 0 15px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.el-primary-button:disabled,
+.el-danger-button:disabled,
+.el-secondary-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* =========================================
+   STATISTICS
+========================================= */
+
+.el-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.el-stat-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    min-width: 0;
+    padding: 20px;
+    border: 1px solid var(--el-border);
+    border-radius: 15px;
+    background: var(--el-card);
+    box-shadow: 0 3px 12px rgb(25 40 75 / 3%);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.el-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 9px 22px rgb(25 40 75 / 7%);
+}
+
+.el-stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+}
+
+.el-icon-blue {
+    color: #4b63df;
+    background: #edf0ff;
+}
+
+.el-icon-amber {
+    color: #bd7b17;
+    background: #fff5df;
+}
+
+.el-icon-green {
+    color: #16835d;
+    background: #e4f8ee;
+}
+
+.el-icon-purple {
+    color: #8852c7;
+    background: #f2eaff;
+}
+
+.el-stat-card>div:last-child {
+    min-width: 0;
+}
+
+.el-stat-card p {
+    margin: 1px 0 8px;
+    color: var(--el-muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.el-stat-card h2 {
+    margin: 0;
+    color: var(--el-text);
+    font-size: 29px;
+    line-height: 1;
+    font-weight: 750;
+}
+
+.el-stat-card span {
+    display: block;
+    margin-top: 8px;
+    color: #8a93a6;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+/* =========================================
+   LEAVE REQUESTS PANEL
+========================================= */
+
+.el-panel {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    overflow: visible;
+    border: 1px solid var(--el-border);
+    border-radius: 16px;
+    background: var(--el-card);
+    box-shadow: 0 4px 15px rgb(25 40 75 / 3%);
+}
+
+.el-panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 22px 24px;
+}
+
+.el-panel-heading h2 {
+    margin: 0;
+    color: var(--el-text);
+    font-size: 17px;
+    font-weight: 750;
+}
+
+.el-panel-heading p {
+    margin: 6px 0 0;
+    color: var(--el-muted);
+    font-size: 12px;
+}
+
+.el-total-badge {
+    flex-shrink: 0;
+    padding: 7px 10px;
+    border: 1px solid #e4e8ff;
+    border-radius: 8px;
+    color: #4c60d2;
+    background: #f3f5ff;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* =========================================
+   SEARCH AND FILTERS
+========================================= */
+
+.el-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 15px 24px;
+    border-top: 1px solid #edf0f5;
+    border-bottom: 1px solid #edf0f5;
+    background: #fcfdff;
+}
+
+.el-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: min(100%, 410px);
+    min-height: 41px;
+    padding: 0 12px;
+    border: 1px solid #e1e6ef;
+    border-radius: 9px;
+    color: #8791a5;
+    background: #fff;
+}
+
+.el-search:focus-within {
+    border-color: #a9b4ff;
+    box-shadow: 0 0 0 3px rgb(83 104 232 / 9%);
+}
+
+.el-search input {
+    width: 100%;
+    min-width: 0;
+    padding: 10px 0;
+    border: 0;
+    outline: none;
+    color: #263148;
+    background: transparent;
+    font: inherit;
+    font-size: 12px;
+}
+
+.el-search input::placeholder {
+    color: #a1a9b8;
+}
+
+.el-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #68738a;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.el-filter-control {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.el-filter select {
+    min-width: 130px;
+    min-height: 39px;
+    padding: 0 34px 0 12px;
+    appearance: none;
+    border: 1px solid #e1e6ef;
+    border-radius: 9px;
+    outline: none;
+    color: #36415b;
+    background: #fff;
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.el-filter select:focus {
+    border-color: #a9b4ff;
+}
+
+.el-filter-control>svg {
+    position: absolute;
+    right: 11px;
+    pointer-events: none;
+}
+
+/* =========================================
+   TABLE — VISIBILITY FIX PRESERVED
+========================================= */
+
+.el-table-wrap {
+    display: block;
+    width: 100%;
+    min-height: 60px;
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+.el-table {
+    display: table;
+    width: 100%;
+    min-width: 790px;
+    border-collapse: collapse;
+    text-align: left;
+    visibility: visible;
+    opacity: 1;
+}
+
+.el-table thead {
+    background: #f8f9fc;
+}
+
+.el-table th {
+    padding: 14px 18px;
+    border-bottom: 1px solid #e9edf4;
+    color: #8490a5;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.55px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.el-table td {
+    padding: 16px 18px;
+    border-bottom: 1px solid #edf0f5;
+    color: #39445a;
+    font-size: 12px;
+    vertical-align: middle;
+}
+
+.el-table tbody {
+    display: table-row-group;
+    visibility: visible;
+}
+
+.el-table tbody tr {
+    display: table-row;
+    visibility: visible;
+    opacity: 1;
+    transition: background 0.15s ease;
+}
+
+.el-table tbody tr:hover {
+    background: #fafbff;
+}
+
+.el-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.el-table tbody td {
+    visibility: visible;
+}
+
+/* =========================================
+   EMPLOYEE INFORMATION
+========================================= */
+
+.el-employee {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 170px;
+}
+
+.el-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    border: 1px solid #e3e7ff;
+    border-radius: 12px;
+    color: #5368d9;
+    background: #eff1ff;
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.el-employee>div:last-child,
+.el-review-summary>div:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.el-employee strong,
+.el-review-summary strong {
+    overflow-wrap: anywhere;
+    color: #273148;
+    font-size: 12px;
+    font-weight: 750;
+}
+
+.el-employee span,
+.el-review-summary span {
+    color: #8a94a7;
+    font-size: 10px;
+}
+
+/* =========================================
+   LEAVE TYPE AND DATES
+========================================= */
+
+.el-leave-type {
+    display: inline-block;
+    padding: 6px 8px;
+    border: 1px solid #e8eaf3;
+    border-radius: 7px;
+    color: #59637a;
+    background: #f8f9fc;
+    font-size: 10px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.el-dates {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.el-dates span:last-child {
+    color: #929bad;
+    font-size: 10px;
+}
+
+/* =========================================
+   STATUS BADGES
+========================================= */
+
+.el-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 9px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 750;
+    white-space: nowrap;
+}
+
+.el-status-dot {
+    width: 6px;
+    height: 6px;
+    flex: 0 0 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.el-status-pending {
+    color: #a66a0b;
+    background: #fff5df;
+}
+
+.el-status-forwarded-to-hr {
+    color: #4d5fc6;
+    background: #eef0ff;
+}
+
+.el-status-approved {
+    color: #16784e;
+    background: #e6f8ef;
+}
+
+.el-status-rejected {
+    color: #c14350;
+    background: #fff0f1;
+}
+
+/* =========================================
+   TABLE ACTIONS
+========================================= */
+
+.el-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.el-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition:
+        background 0.18s ease,
+        transform 0.18s ease;
+}
+
+.el-action:hover {
+    transform: translateY(-1px);
+}
+
+.el-view {
+    border-color: #e3e8f1;
+    color: #5c6880;
+    background: #fff;
+}
+
+.el-view:hover {
+    background: #f0f3fa;
+}
+
+.el-approve {
+    border-color: #d7f0e3;
+    color: #168157;
+    background: #eaf9f1;
+}
+
+.el-approve:hover {
+    background: #d8f4e5;
+}
+
+.el-reject {
+    border-color: #f7dfe2;
+    color: #c34552;
+    background: #fff0f1;
+}
+
+.el-reject:hover {
+    background: #ffe1e4;
+}
+
+/* =========================================
+   PANEL FOOTER
+========================================= */
+
+.el-panel-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px 24px;
+    border-top: 1px solid #edf0f5;
+    color: #929bad;
+    background: #fcfdff;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+/* =========================================
+   EMPTY STATE AND LOADING
+========================================= */
+
+.el-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 250px;
+    padding: 32px 20px;
+    text-align: center;
+}
+
+.el-empty-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    margin-bottom: 15px;
+    border: 1px solid #e6eaff;
+    border-radius: 16px;
+    color: #6375e4;
+    background: #f1f3ff;
+}
+
+.el-empty h3 {
+    margin: 0;
+    color: #2a354c;
+    font-size: 15px;
+}
+
+.el-empty p {
+    max-width: 380px;
+    margin: 8px 0 0;
+    color: #8993a6;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.el-clear-button {
+    min-height: 35px;
+    margin-top: 16px;
+    border-color: #dfe4ff;
+    color: #4f62d1;
+    background: #f1f3ff;
+}
+
+.el-clear-button:hover {
+    background: #e7eaff;
+}
+
+/* =========================================
+   SUCCESS AND ERROR ALERTS
+========================================= */
+
+.el-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 13px 15px;
+    border: 1px solid;
+    border-radius: 10px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.el-alert>span {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.el-alert>button {
+    display: inline-flex;
+    flex-shrink: 0;
+    padding: 2px;
+    border: 0;
+    color: inherit;
+    background: transparent;
+    cursor: pointer;
+}
+
+.el-alert-success {
+    border-color: #c9ecd9;
+    color: #16784e;
+    background: #edfbf3;
+}
+
+.el-alert-error {
+    border-color: #f4d0d4;
+    color: #b83e4a;
+    background: #fff3f4;
+}
+
+/* =========================================
+   MODALS
+========================================= */
+
+.el-modal-backdrop {
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 24px;
+    background: rgb(17 25 44 / 54%);
+    backdrop-filter: blur(4px);
+}
+
+.el-modal {
+    width: min(100%, 600px);
+    max-height: min(85vh, 800px);
+    overflow-y: auto;
+    padding: 25px;
+    border: 1px solid #e8ecf4;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 24px 80px rgb(13 23 45 / 25%);
+    animation: el-modal-enter 0.18s ease-out;
+}
+
+@keyframes el-modal-enter {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.99);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.el-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 23px;
+}
+
+.el-eyebrow {
+    display: inline-block;
+    margin-bottom: 8px;
+    color: var(--el-primary);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.el-modal-header h2 {
+    margin: 0;
+    color: #202b42;
+    font-size: 20px;
+    font-weight: 750;
+}
+
+.el-modal-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 35px;
+    width: 35px;
+    height: 35px;
+    border: 1px solid #e6eaf1;
+    border-radius: 10px;
+    color: #647087;
+    background: #fff;
+    cursor: pointer;
+}
+
+.el-modal-close:hover:not(:disabled) {
+    background: #f7f8fb;
+}
+
+.el-modal-close:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* =========================================
+   REQUEST DETAILS
+========================================= */
+
+.el-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.el-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+    padding: 13px;
+    border: 1px solid #e9edf4;
+    border-radius: 10px;
+    background: #fafbfe;
+}
+
+.el-detail-item span,
+.el-reason>span,
+.el-comment-field>span {
+    color: #8590a4;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.45px;
+}
+
+.el-detail-item strong {
+    overflow-wrap: anywhere;
+    color: #2c374e;
+    font-size: 12px;
+}
+
+.el-reason {
+    margin-top: 16px;
+    padding: 15px;
+    border: 1px solid #e9edf4;
+    border-radius: 11px;
+    background: #fafbfe;
+}
+
+.el-reason p {
+    margin: 8px 0 0;
+    color: #58647b;
+    font-size: 12px;
+    line-height: 1.75;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+/* =========================================
+   MODAL FOOTER BUTTONS
+========================================= */
+
+.el-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 24px;
+}
+
+.el-primary-button {
+    color: #fff;
+    background: #5368e8;
+}
+
+.el-primary-button:hover:not(:disabled) {
+    background: #4358d7;
+}
+
+.el-danger-button {
+    border-color: #f4d8dc;
+    color: #c14451;
+    background: #fff1f2;
+}
+
+.el-danger-button:hover:not(:disabled) {
+    background: #ffe4e6;
+}
+
+.el-secondary-button {
+    border-color: #e2e7ef;
+    color: #5c6880;
+    background: #fff;
+}
+
+.el-secondary-button:hover:not(:disabled) {
+    background: #f7f8fb;
+}
+
+/* =========================================
+   REVIEW MODAL
+========================================= */
+
+.el-review-summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px;
+    border: 1px solid #e9edf4;
+    border-radius: 11px;
+    background: #fafbfe;
+}
+
+.el-review-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 17px;
+    padding: 14px;
+    border: 1px solid #e3e7ff;
+    border-radius: 10px;
+    color: #4e60c9;
+    background: #f3f5ff;
+}
+
+.el-review-info>svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.el-review-info p {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.el-comment-field {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-top: 18px;
+}
+
+.el-comment-field b {
+    color: #c14451;
+}
+
+.el-comment-field textarea {
+    width: 100%;
+    min-height: 110px;
+    resize: vertical;
+    padding: 12px;
+    border: 1px solid #dfe5ef;
+    border-radius: 10px;
+    outline: none;
+    color: #2c374e;
+    background: #fff;
+    font: inherit;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.el-comment-field textarea:focus {
+    border-color: #9caaff;
+    box-shadow: 0 0 0 3px rgb(83 104 232 / 9%);
+}
+
+.el-inline-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 13px;
+    color: #bd3e4b;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.el-inline-error svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+/* =========================================
+   LOADING SPINNER
+========================================= */
+
+.el-spin {
+    animation: el-spin 0.9s linear infinite;
+}
+
+@keyframes el-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* =========================================
+   RESPONSIVE — TABLETS
+========================================= */
+
+@media (max-width: 1200px) {
+    .employee-leaves-page {
+        padding: 24px;
+    }
+
+    .el-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* =========================================
+   RESPONSIVE — MOBILE
+========================================= */
+
+@media (max-width: 760px) {
+    .employee-leaves-page {
+        padding: 18px;
+        gap: 18px;
+    }
+
+    .employee-leaves-page>.page-header {
+        margin-bottom: 4px;
+    }
+
+    .el-stats {
+        gap: 11px;
+    }
+
+    .el-stat-card {
+        gap: 10px;
+        padding: 14px;
+    }
+
+    .el-stat-icon {
+        flex-basis: 37px;
+        width: 37px;
+        height: 37px;
+    }
+
+    .el-stat-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .el-stat-card h2 {
+        font-size: 25px;
+    }
+
+    .el-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 14px;
+    }
+
+    .el-search {
+        width: 100%;
+    }
+
+    .el-filter {
+        justify-content: space-between;
+    }
+
+    .el-filter-control,
+    .el-filter select {
+        width: 100%;
+    }
+
+    .el-panel-heading {
+        padding: 18px;
+    }
+
+    .el-panel-footer {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 13px 18px;
+    }
+
+    .el-table th,
+    .el-table td {
+        padding: 13px;
+    }
+}
+
+/* =========================================
+   RESPONSIVE — SMALL PHONES
+========================================= */
+
+@media (max-width: 440px) {
+    .employee-leaves-page {
+        padding: 14px;
+    }
+
+    .el-stats {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .el-stat-card {
+        align-items: center;
+    }
+
+    .el-stat-card span {
+        margin-top: 5px;
+    }
+
+    .el-total-badge {
+        display: none;
+    }
+
+    .el-detail-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .el-modal-backdrop {
+        align-items: flex-start;
+        padding: 12px;
+    }
+
+    .el-modal {
+        margin: auto 0;
+        padding: 18px;
+        border-radius: 14px;
+    }
+
+    .el-modal-footer {
+        align-items: stretch;
+        flex-direction: column-reverse;
+    }
+
+    .el-modal-footer button {
+        width: 100%;
+    }
+}
