@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Users,
@@ -12,6 +12,9 @@ import {
   LayoutDashboard,
   BriefcaseBusiness,
   ChartNoAxesCombined,
+  ClipboardCheck,
+  FileText,
+  CalendarRange,
 } from "lucide-react";
 
 import { useAuth } from "../context/AuthContext";
@@ -22,26 +25,54 @@ const items = [
   {
     icon: LayoutDashboard,
     label: "Dashboard",
-    roles: ["cto_md"],
+    roles: ["employee", "cto_md", "ceo", "super_admin"],
   },
   {
     icon: CalendarCheck,
     label: "Attendance",
   },
   {
+    icon: FileText,
+    label: "Monthly Report",
+    roles: [
+      "employee",
+      "hr",
+      "ceo",
+      "cto_md",
+      "super_admin",
+      "superuser",
+    ],
+  },
+  {
     icon: Users,
     label: "Employees",
-    roles: ["manager", "cto_md"],
+    roles: ["manager", "cto_md", "ceo", "super_admin"],
   },
   {
     icon: CalendarCheck,
     label: "Employee Leaves",
-    roles: ["manager", "hr"],
+    roles: ["manager", "hr", "super_admin"],
+  },
+  {
+    icon: CalendarRange,
+    label: "Holidays",
+    roles: ["hr"],
+  },
+  {
+    icon: ClipboardCheck,
+    label: "Leave Management",
+    roles: ["ceo", "super_admin"],
   },
   {
     icon: CalendarDays,
     label: "Company Attendance",
-    roles: ["hr", "cto_md"],
+    roles: [
+      "hr",
+      "ceo",
+      "cto_md",
+      "super_admin",
+      "superuser",
+    ],
   },
   {
     icon: ClipboardList,
@@ -60,12 +91,12 @@ const items = [
   {
     icon: BriefcaseBusiness,
     label: "Manager Profiles",
-    roles: ["cto_md"],
+    roles: ["cto_md", "super_admin"],
   },
   {
     icon: ChartNoAxesCombined,
     label: "Overall Progress",
-    roles: ["cto_md"],
+    roles: ["cto_md", "super_admin"],
   },
   {
     icon: ShieldCheck,
@@ -80,7 +111,7 @@ const items = [
 
 const ROLE_LABELS = {
   super_admin: "Super Admin",
-  superuser: "Super Admin",
+  superuser: "Superuser",
   admin: "Admin",
   cto_md: "CTO / Managing Director",
   hr: "HR",
@@ -89,35 +120,53 @@ const ROLE_LABELS = {
   employee: "Employee",
 };
 
+function normalizeRole(role) {
+  return String(role || "employee")
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_");
+}
+
+function getDefaultPage(role) {
+  if (["employee", "cto_md", "ceo"].includes(role)) {
+    return "Dashboard";
+  }
+
+  if (["super_admin", "superuser"].includes(role)) {
+    return "Admin Dashboard";
+  }
+
+  return "Attendance";
+}
+
 export default function Sidebar({
   onNavigate,
   onSection,
   settingsRole,
   onLogout,
+  activePage,
 }) {
   const { user, logout: authLogout } = useAuth();
 
-  const currentRole = String(
+  const currentRole = normalizeRole(
     settingsRole || user?.role || "employee"
-  )
-    .trim()
-    .toLowerCase()
-    .replace(/[\s-]+/g, "_");
+  );
+
+  const isSuperAdmin = currentRole === "super_admin";
 
   const currentName = user?.name || "User";
   const currentEmail = user?.email || "";
   const roleLabel = ROLE_LABELS[currentRole] || "Employee";
 
-  const defaultPage =
-    currentRole === "cto_md"
-      ? "Dashboard"
-      : currentRole === "super_admin" ||
-        currentRole === "superuser"
-        ? "Admin Dashboard"
-        : "Attendance";
+  const [active, setActive] = useState(
+    activePage || getDefaultPage(currentRole)
+  );
 
-  const [active, setActive] = useState(defaultPage);
   const [logoOk, setLogoOk] = useState(true);
+
+  useEffect(() => {
+    setActive(activePage || getDefaultPage(currentRole));
+  }, [activePage, currentRole, user?.id, user?._id]);
 
   const filteredItems = items.filter((item) => {
     if (item.roles && !item.roles.includes(currentRole)) {
@@ -156,26 +205,47 @@ export default function Sidebar({
           />
         ) : (
           <span className="sidebar-fallback">
-            Aksit Global
+            AKSIT GLOBAL
           </span>
         )}
       </div>
 
-      <p className="sidebar-label">Menu</p>
+      {isSuperAdmin && (
+        <div
+          className="sidebar-readonly-notice"
+          title="You can view company information but cannot make operational changes."
+        >
+          <ShieldCheck size={16} aria-hidden="true" />
 
-      <nav className="sidebar-nav">
+          <div>
+            <strong>Read-Only Mode</strong>
+            <span>View access only</span>
+          </div>
+        </div>
+      )}
+
+      <nav className="sidebar-nav" aria-label="Main navigation">
         {filteredItems.map(({ icon: Icon, label }) => (
           <button
             type="button"
             key={label}
             onClick={() => go(label)}
-            className={`sidebar-link ${active === label ? "active" : ""
-              }`}
+            className={`sidebar-link ${
+              active === label ? "active" : ""
+            }`}
+            aria-current={
+              active === label ? "page" : undefined
+            }
           >
             {active === label && (
               <motion.div
                 layoutId="active"
                 className="sidebar-pill"
+                transition={{
+                  type: "spring",
+                  stiffness: 350,
+                  damping: 30,
+                }}
               />
             )}
 
@@ -183,10 +253,16 @@ export default function Sidebar({
               <motion.span
                 layoutId="bar"
                 className="sidebar-bar"
+                transition={{
+                  type: "spring",
+                  stiffness: 350,
+                  damping: 30,
+                }}
               />
             )}
 
-            <Icon size={18} />
+            <Icon size={18} aria-hidden="true" />
+
             <span>{label}</span>
           </button>
         ))}
@@ -199,7 +275,7 @@ export default function Sidebar({
             className="sidebar-link sidebar-logout"
             onClick={handleLogout}
           >
-            <LogOut size={18} />
+            <LogOut size={18} aria-hidden="true" />
             <span>Logout</span>
           </button>
         </div>

@@ -1,0 +1,960 @@
+
+.employee-monthly-report-page {
+    min-height: 100%;
+    padding: 24px;
+    background: #f5f7fb;
+    color: #172033;
+    box-sizing: border-box;
+}
+
+.employee-monthly-report-page *,
+.employee-monthly-report-page *::before,
+.employee-monthly-report-page *::after {
+    box-sizing: border-box;
+}
+
+.employee-monthly-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 13px 15px;
+    margin: 18px 0;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.employee-monthly-alert > svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.employee-monthly-alert > span {
+    flex: 1;
+    min-width: 0;
+}
+
+.employee-monthly-alert button {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.employee-monthly-alert-error {
+    color: #a52835;
+    background: #fff0f1;
+    border-color: #ffd5d9;
+}
+
+.employee-monthly-alert-success {
+    color: #167447;
+    background: #eaf9f0;
+    border-color: #c9efd8;
+}
+
+.employee-monthly-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin: 22px 0 18px;
+    padding: 18px 20px;
+    background: #fff;
+    border: 1px solid #e5eaf2;
+    border-radius: 15px;
+    box-shadow: 0 3px 12px rgb(27 45 78 / 3%);
+}
+
+.employee-monthly-month-heading {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-width: 0;
+}
+
+.employee-monthly-month-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 46px;
+    height: 46px;
+    color: #315fe9;
+    background: #edf2ff;
+    border-radius: 13px;
+}
+
+.employee-monthly-overline {
+    display: block;
+    margin-bottom: 4px;
+    color: #8590a5;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.1px;
+}
+
+.employee-monthly-month-heading h2 {
+    margin: 0;
+    color: #18233a;
+    font-size: 20px;
+    font-weight: 750;
+    line-height: 1.3;
+}
+
+.employee-monthly-month-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.employee-monthly-month-controls button {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    color: #34415a;
+    background: #fff;
+    border: 1px solid #e0e6ef;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 160ms ease, border-color 160ms ease;
+}
+
+.employee-monthly-month-controls button:hover:not(:disabled) {
+    color: #315fe9;
+    background: #f2f5ff;
+    border-color: #cbd6ff;
+}
+
+.employee-monthly-month-controls button:disabled {
+    color: #b9c1cf;
+    background: #f8f9fb;
+    cursor: not-allowed;
+}
+
+.employee-monthly-month-controls input {
+    width: 160px;
+    min-width: 0;
+    height: 38px;
+    padding: 0 10px;
+    color: #27344b;
+    background: #f9faff;
+    border: 1px solid #e0e6ef;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 12px;
+    outline: none;
+}
+
+.employee-monthly-month-controls input:focus,
+.employee-monthly-filter select:focus {
+    border-color: #7c98f5;
+    box-shadow: 0 0 0 3px rgb(49 95 233 / 9%);
+}
+
+.employee-monthly-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 18px;
+    padding: 19px 21px;
+    background: linear-gradient(115deg, #fff 0%, #f6f8ff 100%);
+    border: 1px solid #e4e9f5;
+    border-radius: 15px;
+}
+
+.employee-monthly-avatar {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 53px;
+    height: 53px;
+    color: #fff;
+    background: linear-gradient(145deg, #5079f3, #3154ce);
+    border-radius: 16px;
+    font-size: 23px;
+    font-weight: 800;
+    box-shadow: 0 5px 12px rgb(49 84 206 / 17%);
+}
+
+.employee-monthly-profile-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.employee-monthly-profile-info > span {
+    display: block;
+    margin-bottom: 4px;
+    color: #71809a;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.employee-monthly-profile-info h2 {
+    margin: 0;
+    color: #17233b;
+    font-size: 17px;
+    font-weight: 750;
+    overflow-wrap: anywhere;
+}
+
+.employee-monthly-profile-info p {
+    margin: 5px 0 0;
+    color: #7b879b;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.employee-monthly-profile-period {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    padding: 9px 12px;
+    color: #465a91;
+    background: #edf2ff;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.employee-monthly-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 15px;
+    margin-bottom: 18px;
+}
+
+.employee-monthly-stat-card {
+    min-width: 0;
+    padding: 19px;
+    background: #fff;
+    border: 1px solid #e5eaf2;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgb(27 45 78 / 3%);
+    transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.employee-monthly-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 18px rgb(27 45 78 / 6%);
+}
+
+.employee-monthly-stat-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    color: #78849a;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.employee-monthly-stat-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+}
+
+.monthly-icon-green {
+    color: #14945c;
+    background: #e8f8ef;
+}
+
+.monthly-icon-red {
+    color: #d84d58;
+    background: #fff0f1;
+}
+
+.monthly-icon-purple {
+    color: #8252d6;
+    background: #f2ecff;
+}
+
+.monthly-icon-blue {
+    color: #3568e8;
+    background: #edf2ff;
+}
+
+.employee-monthly-stat-card > strong {
+    display: block;
+    margin-top: 14px;
+    color: #17233a;
+    font-size: clamp(24px, 2vw, 30px);
+    font-weight: 800;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+.employee-monthly-stat-card > small {
+    display: block;
+    margin-top: 7px;
+    color: #8a95a7;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.employee-monthly-progress-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+.employee-monthly-progress-card {
+    min-width: 0;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #e5eaf2;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgb(27 45 78 / 3%);
+}
+
+.employee-monthly-progress-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.employee-monthly-progress-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    color: #188456;
+    background: #eaf8f0;
+    border-radius: 12px;
+}
+
+.monthly-progress-icon-blue {
+    color: #3568e8;
+    background: #edf2ff;
+}
+
+.employee-monthly-progress-heading h3 {
+    margin: 0;
+    color: #243149;
+    font-size: 14px;
+    font-weight: 750;
+}
+
+.employee-monthly-progress-heading p {
+    margin: 5px 0 0;
+    color: #8994a7;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.employee-monthly-progress-value {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 21px 0 12px;
+}
+
+.employee-monthly-progress-value strong {
+    color: #1b2940;
+    font-size: 27px;
+    font-weight: 800;
+}
+
+.employee-monthly-progress-value span {
+    color: #7e899d;
+    font-size: 11px;
+    text-align: right;
+}
+
+.employee-monthly-progress-track {
+    height: 8px;
+    overflow: hidden;
+    background: #edf0f6;
+    border-radius: 999px;
+}
+
+.employee-monthly-progress-fill {
+    height: 100%;
+    border-radius: inherit;
+    transition: width 250ms ease;
+}
+
+.monthly-progress-green {
+    background: linear-gradient(90deg, #20b779, #15945d);
+}
+
+.monthly-progress-blue {
+    background: linear-gradient(90deg, #6488ff, #345de4);
+}
+
+.employee-monthly-days-section {
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #e5eaf2;
+    border-radius: 15px;
+    box-shadow: 0 3px 12px rgb(27 45 78 / 3%);
+}
+
+.employee-monthly-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 21px 22px;
+    border-bottom: 1px solid #edf0f5;
+}
+
+.employee-monthly-section-heading h2 {
+    margin: 0;
+    color: #1b2940;
+    font-size: 17px;
+    font-weight: 780;
+}
+
+.employee-monthly-section-heading p {
+    margin: 6px 0 0;
+    color: #8792a5;
+    font-size: 12px;
+}
+
+.employee-monthly-filter {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: #778399;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.employee-monthly-filter select {
+    min-width: 155px;
+    height: 37px;
+    padding: 0 30px 0 11px;
+    color: #36445b;
+    background: #fafbfe;
+    border: 1px solid #e1e7f0;
+    border-radius: 9px;
+    font: inherit;
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+}
+
+.employee-monthly-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.employee-monthly-table {
+    width: 100%;
+    min-width: 850px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.employee-monthly-table thead {
+    background: #f8f9fc;
+}
+
+.employee-monthly-table th {
+    padding: 14px 16px;
+    color: #78849a;
+    border-bottom: 1px solid #e9edf4;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.45px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.employee-monthly-table td {
+    padding: 15px 16px;
+    color: #4e5b70;
+    border-bottom: 1px solid #eef1f6;
+    font-size: 12px;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.employee-monthly-table tbody tr {
+    transition: background 130ms ease;
+}
+
+.employee-monthly-table tbody tr:hover {
+    background: #fafbff;
+}
+
+.employee-monthly-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.employee-monthly-date-cell {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.employee-monthly-date-cell strong {
+    color: #27344b;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.employee-monthly-date-cell > span {
+    padding: 3px 6px;
+    color: #315fe9;
+    background: #edf2ff;
+    border-radius: 5px;
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.employee-monthly-hours {
+    color: #26354c;
+    font-weight: 750;
+}
+
+.employee-monthly-row-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 90px;
+}
+
+.employee-monthly-row-progress-track {
+    width: 55px;
+    height: 6px;
+    overflow: hidden;
+    background: #edf0f5;
+    border-radius: 999px;
+}
+
+.employee-monthly-row-progress-track > div {
+    height: 100%;
+    background: #6786f2;
+    border-radius: inherit;
+}
+
+.employee-monthly-row-progress-track > div.is-complete {
+    background: #1baa70;
+}
+
+.employee-monthly-row-progress > span {
+    min-width: 30px;
+    color: #59677e;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.employee-monthly-no-target {
+    color: #9aa4b4;
+}
+
+.employee-monthly-status-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.employee-monthly-status-cell small {
+    max-width: 150px;
+    color: #8792a5;
+    font-size: 10px;
+    white-space: normal;
+}
+
+.employee-monthly-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 25px;
+    padding: 5px 9px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    font-size: 10px;
+    font-weight: 750;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.employee-monthly-status-present,
+.employee-monthly-status-completed,
+.employee-monthly-status-on-time {
+    color: #147548;
+    background: #eaf8f0;
+    border-color: #d4f0e0;
+}
+
+.employee-monthly-status-absent,
+.employee-monthly-status-missed,
+.employee-monthly-status-incomplete {
+    color: #b33e49;
+    background: #fff0f1;
+    border-color: #ffdcdf;
+}
+
+.employee-monthly-status-on-leave,
+.employee-monthly-status-leave,
+.employee-monthly-status-approved-leave {
+    color: #7651bd;
+    background: #f3edff;
+    border-color: #e7dcff;
+}
+
+.employee-monthly-status-holiday,
+.employee-monthly-status-public-holiday,
+.employee-monthly-status-company-holiday,
+.employee-monthly-status-sunday,
+.employee-monthly-status-weekly-off,
+.employee-monthly-status-off-day {
+    color: #586780;
+    background: #f0f3f8;
+    border-color: #e3e8f0;
+}
+
+.employee-monthly-status-late,
+.employee-monthly-status-short-hours,
+.employee-monthly-status-pending,
+.employee-monthly-status-not-started,
+.employee-monthly-status-half-day {
+    color: #98651a;
+    background: #fff7e6;
+    border-color: #f6e7bf;
+}
+
+.employee-monthly-status-not-marked,
+.employee-monthly-status-no-record {
+    color: #69778c;
+    background: #f3f5f8;
+    border-color: #e4e8ef;
+}
+
+.employee-monthly-table-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin: 0;
+    padding: 14px 20px;
+    color: #78869b;
+    background: #fafbfe;
+    border-top: 1px solid #edf0f5;
+}
+
+.employee-monthly-table-note svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: #7487b5;
+}
+
+.employee-monthly-table-note p {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.employee-monthly-table-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 180px;
+    padding: 25px;
+    color: #8a96a9;
+    text-align: center;
+}
+
+.employee-monthly-table-empty p {
+    margin: 0;
+    font-size: 13px;
+}
+
+.employee-monthly-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    margin-top: 20px;
+    padding: 32px;
+    background: #fff;
+    border: 1px solid #e5eaf2;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.employee-monthly-state > svg {
+    color: #4770e8;
+}
+
+.employee-monthly-state h3 {
+    margin: 17px 0 0;
+    color: #26344b;
+    font-size: 17px;
+    font-weight: 750;
+}
+
+.employee-monthly-state p {
+    max-width: 450px;
+    margin: 9px 0 0;
+    color: #8390a4;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.employee-monthly-state-icon {
+    display: grid;
+    place-items: center;
+    width: 58px;
+    height: 58px;
+    color: #4269df;
+    background: #edf2ff;
+    border-radius: 17px;
+}
+
+.employee-monthly-primary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    margin-top: 20px;
+    padding: 0 16px;
+    color: #fff;
+    background: #315fe9;
+    border: 1px solid #315fe9;
+    border-radius: 9px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 150ms ease;
+}
+
+.employee-monthly-primary-button:hover:not(:disabled) {
+    background: #244dc9;
+}
+
+.employee-monthly-primary-button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.employee-monthly-spin {
+    animation: employee-monthly-spin 1s linear infinite;
+}
+
+@keyframes employee-monthly-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 1100px) {
+    .employee-monthly-report-page {
+        padding: 20px;
+    }
+
+    .employee-monthly-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .employee-monthly-stat-card {
+        padding: 17px;
+    }
+}
+
+@media (max-width: 700px) {
+    .employee-monthly-report-page {
+        padding: 14px;
+    }
+
+    .employee-monthly-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 15px;
+        padding: 16px;
+    }
+
+    .employee-monthly-month-controls {
+        width: 100%;
+    }
+
+    .employee-monthly-month-controls input {
+        flex: 1;
+        width: auto;
+    }
+
+    .employee-monthly-profile {
+        align-items: flex-start;
+        flex-wrap: wrap;
+        padding: 16px;
+    }
+
+    .employee-monthly-profile-period {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .employee-monthly-stats {
+        gap: 10px;
+    }
+
+    .employee-monthly-stat-card {
+        padding: 14px;
+    }
+
+    .employee-monthly-stat-top {
+        align-items: flex-start;
+        font-size: 11px;
+    }
+
+    .employee-monthly-stat-icon {
+        width: 33px;
+        height: 33px;
+    }
+
+    .employee-monthly-stat-card > strong {
+        margin-top: 12px;
+        font-size: 25px;
+    }
+
+    .employee-monthly-progress-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .employee-monthly-progress-card {
+        padding: 16px;
+    }
+
+    .employee-monthly-section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 17px 15px;
+    }
+
+    .employee-monthly-filter {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .employee-monthly-filter select {
+        flex: 1;
+        max-width: 220px;
+    }
+
+    .employee-monthly-table-note {
+        padding: 13px 14px;
+    }
+}
+
+@media (max-width: 400px) {
+    .employee-monthly-report-page {
+        padding: 10px;
+    }
+
+    .employee-monthly-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .employee-monthly-stat-card {
+        padding: 15px;
+    }
+
+    .employee-monthly-stat-card > strong {
+        font-size: 26px;
+    }
+
+    .employee-monthly-month-heading h2 {
+        font-size: 18px;
+    }
+
+    .employee-monthly-profile-info h2 {
+        font-size: 15px;
+    }
+
+    .employee-monthly-progress-value {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .employee-monthly-progress-value span {
+        text-align: left;
+    }
+}
+
+
+
+
+/* Separate employee report from the employee list */
+.employee-monthly-profile {
+    margin-top: 30px;
+    scroll-margin-top: 24px;
+}
+
+.employee-monthly-profile,
+.employee-monthly-stat-card,
+.employee-monthly-progress-card,
+.employee-monthly-days-section {
+    box-shadow: 0 5px 18px rgb(15 27 51 / 6%);
+}
+
+/* Dark navy action buttons matching the sidebar */
+.employee-monthly-primary-button {
+    color: #ffffff;
+    background: #0f1b33;
+    border: 1px solid #0f1b33;
+    transition:
+        background 180ms ease,
+        border-color 180ms ease,
+        transform 180ms ease;
+}
+
+.employee-monthly-primary-button:hover:not(:disabled) {
+    color: #ffffff;
+    background: #1b2c4b;
+    border-color: #1b2c4b;
+    transform: translateY(-1px);
+}
+
+.employee-monthly-primary-button:focus-visible {
+    outline: 3px solid rgb(96 165 250 / 45%);
+    outline-offset: 3px;
+}
+
+/* Keep report details visually distinct from the table */
+.employee-monthly-days-section {
+    margin-top: 22px;
+    border-radius: 15px;
+}
+
+.employee-monthly-table-wrap {
+    border-radius: 12px;
+}
+
+@media (max-width: 700px) {
+    .employee-monthly-profile {
+        margin-top: 22px;
+        scroll-margin-top: 12px;
+    }
+
+    .employee-monthly-days-section {
+        margin-top: 16px;
+    }
+}

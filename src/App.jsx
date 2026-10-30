@@ -1,5 +1,5 @@
-
 import { useEffect, useState } from "react";
+
 import {
   Eye,
   EyeOff,
@@ -10,6 +10,7 @@ import {
 
 import SuperAdminSettings from "./admin/SuperAdminSettings";
 import Sidebar from "./components/Sidebar";
+import PageHeader from "./components/PageHeader";
 import Login from "./components/Login";
 import SuperAdminDashboard from "./admin/SuperAdminDashboard";
 import HREmployeeLeaves from "./hr/HREmployeeLeaves";
@@ -19,26 +20,31 @@ import CTOCompanyAttendance from "./cto/md/CTOCompanyAttendance";
 import CTOEmployees from "./cto/md/CTOEmployees";
 import CTOTasks from "./cto/md/CTOTasks";
 import Tasks from "./manager/Tasks";
+import HRHolidays from "./hr/HRHolidays";
 import CEOTasks from "./ceo/CEOTasks";
 import CEOAttendance from "./attendance/CEOAttendance";
 import EmployeeAttendance from "./attendance/EmployeeAttendance";
 import HRAttendance from "./attendance/HRAttendance";
 import ManagerAttendance from "./attendance/ManagerAttendance";
+import EmployeeMonthlyReport from "./employee/EmployeeMonthlyReport";
 import EmployeeTasks from "./employee/EmployeeTasks";
+import EmployeeDashboard from "./employee/EmployeeDashboard";
 import ManagerEmployees from "./manager/ManagerEmployees";
 import EmployeeLeaves from "./manager/EmployeeLeaves";
 import RoleSettings from "./components/RoleSettings";
 import { useAuth } from "./context/AuthContext";
-import { apiRequest } from "./api/api";
-import PageHeader from "./components/PageHeader";
 import CTOManagerProfiles from "./cto/md/CTOManagerProfiles";
 import CTODashboard from "./cto/md/CTODashboard";
+import CEODashboard from "./ceo/CEODashboard";
+import CEOCompanyAttendance from "./ceo/CEOCompanyAttendance";
+import CEOEmployees from "./ceo/CEOEmployees";
+import CEOLeaveManagement from "./ceo/CEOLeaveManagement";
 
 import "./App.css";
 import "./PasswordChangeScreen.css";
 
 const PAGE_TITLES = {
-  Dashboard: "CTO / Managing Director Dashboard",
+  Dashboard: "Dashboard",
   Attendance: "Attendance",
   Employees: "Employees",
   "Employee Leaves": "Employee Leaves",
@@ -50,6 +56,9 @@ const PAGE_TITLES = {
   Documents: "Documents",
   Settings: "Settings",
   "Admin Dashboard": "Super Admin Dashboard",
+  "Leave Management": "Leave Management",
+  "Monthly Report": "Monthly Report",
+  Holidays: "Holiday Management",
 };
 
 const AVAILABLE_PAGES = [
@@ -65,6 +74,9 @@ const AVAILABLE_PAGES = [
   "Documents",
   "Settings",
   "Admin Dashboard",
+  "Leave Management",
+  "Monthly Report",
+  "Holidays",
 ];
 
 const PAGES_WITH_OWN_HEADER = [
@@ -77,7 +89,29 @@ const PAGES_WITH_OWN_HEADER = [
   "Overall Progress",
   "Tasks & Projects",
   "Admin Dashboard",
+  "Leave Management",
+  "Monthly Report",
+  "Holidays",
 ];
+
+const MONTHLY_REPORT_ROLES = [
+  "employee",
+  "hr",
+  "ceo",
+  "cto_md",
+  "super_admin",
+  "superuser",
+];
+
+const COMPANY_ATTENDANCE_ROLES = [
+  "hr",
+  "ceo",
+  "cto_md",
+  "super_admin",
+  "superuser",
+];
+
+const ADMIN_ROLES = ["super_admin", "superuser"];
 
 function getSavedTheme() {
   try {
@@ -104,6 +138,7 @@ function PasswordChangeScreen({ user, onChangePassword, onLogout }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     setError("");
     setSuccess("");
 
@@ -194,7 +229,6 @@ function PasswordChangeScreen({ user, onChangePassword, onLogout }) {
 
         <div className="password-change-notice">
           <ShieldCheck size={19} aria-hidden="true" />
-
           <p>
             You are using a temporary password. Set a new
             password to continue.
@@ -439,17 +473,18 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (user && !mustChangePassword) {
-      if (
-        currentRole === "super_admin" ||
-        currentRole === "superuser"
-      ) {
-        setPage("Admin Dashboard");
-      } else if (currentRole === "cto_md") {
-        setPage("Dashboard");
-      } else {
-        setPage("Attendance");
-      }
+    if (!user || mustChangePassword) {
+      return;
+    }
+
+    if (ADMIN_ROLES.includes(currentRole)) {
+      setPage("Admin Dashboard");
+    } else if (
+      ["employee", "cto_md", "ceo"].includes(currentRole)
+    ) {
+      setPage("Dashboard");
+    } else {
+      setPage("Attendance");
     }
   }, [user, currentRole, mustChangePassword]);
 
@@ -460,18 +495,20 @@ export default function App() {
 
     switch (label) {
       case "Dashboard":
+        return ["employee", "cto_md", "ceo"].includes(currentRole);
+
       case "Manager Profiles":
       case "Overall Progress":
         return currentRole === "cto_md";
 
       case "Employees":
-        return ["manager", "cto_md"].includes(currentRole);
-
-      case "Employee Leaves":
-        return ["manager", "hr"].includes(currentRole);
+        return ["manager", "cto_md", "ceo"].includes(currentRole);
 
       case "Company Attendance":
-        return ["hr", "ceo", "cto_md"].includes(currentRole);
+        return COMPANY_ATTENDANCE_ROLES.includes(currentRole);
+
+      case "Holidays":
+        return currentRole === "hr";
 
       case "Tasks & Projects":
         return [
@@ -486,7 +523,13 @@ export default function App() {
         ].includes(currentRole);
 
       case "Admin Dashboard":
-        return ["super_admin", "superuser"].includes(currentRole);
+        return ADMIN_ROLES.includes(currentRole);
+
+      case "Leave Management":
+        return currentRole === "ceo";
+
+      case "Monthly Report":
+        return MONTHLY_REPORT_ROLES.includes(currentRole);
 
       default:
         return true;
@@ -498,181 +541,96 @@ export default function App() {
       return;
     }
 
-    if (label === "Settings") {
-      setSettingsSection("profile");
-    }
-
     setPage(label);
   };
 
   const handleSettingsSection = (section) => {
     setSettingsSection(section);
+    setPage("Settings");
   };
 
   const renderAttendancePage = () => {
-    switch (currentRole) {
-      case "employee":
-        return <EmployeeAttendance role={currentRole} />;
-
-      case "manager":
-        return <ManagerAttendance role={currentRole} />;
-
-      case "hr":
-        return <HRAttendance role={currentRole} />;
-
-      case "cto_md":
-        return <CTOAttendance />;
-
-      case "ceo":
-      case "admin":
-      case "super_admin":
-      case "superuser":
-        return <CEOAttendance role={currentRole} />;
-
-      default:
-        return (
-          <div className="attendance-app-message" role="alert">
-            Your account role is not recognized. Please contact
-            your system administrator.
-          </div>
-        );
+    if (currentRole === "employee") {
+      return <EmployeeAttendance role={currentRole} />;
     }
+
+    if (currentRole === "manager") {
+      return <ManagerAttendance role={currentRole} />;
+    }
+
+    if (currentRole === "hr") {
+      return <HRAttendance role={currentRole} />;
+    }
+
+    if (currentRole === "cto_md") {
+      return <CTOAttendance role={currentRole} />;
+    }
+
+    if (
+      ["ceo", "admin", "super_admin", "superuser"].includes(currentRole)
+    ) {
+      return <CEOAttendance role={currentRole} />;
+    }
+
+    return (
+      <div className="attendance-app-message" role="alert">
+        <h2>Access Denied</h2>
+        <p>You do not have access to this page.</p>
+      </div>
+    );
   };
 
   const renderPage = () => {
+    if (!canAccessPage(page)) {
+      return (
+        <div className="attendance-app-message" role="alert">
+          <h2>Access Denied</h2>
+          <p>You do not have permission to access this page.</p>
+        </div>
+      );
+    }
+
     switch (page) {
       case "Dashboard":
+        if (currentRole === "employee") {
+          return <EmployeeDashboard onNavigate={handleNav} />;
+        }
+
+        if (currentRole === "ceo") {
+          return <CEODashboard />;
+        }
+
         if (currentRole === "cto_md") {
           return <CTODashboard />;
         }
 
         return (
-          <div className="attendance-app-message">
-            <h2>Dashboard</h2>
+          <div className="attendance-app-message" role="alert">
+            <h2>Access Denied</h2>
             <p>This dashboard is not available for this role.</p>
-          </div>
-        );
-
-      case "Manager Profiles":
-        if (currentRole === "cto_md") {
-          return <CTOManagerProfiles />;
-        }
-
-        return (
-          <div className="attendance-app-message" role="alert">
-            <h2>Access Denied</h2>
-            <p>
-              This page is only available to the CTO / Managing Director.
-            </p>
-          </div>
-        );
-
-      case "Overall Progress":
-        if (currentRole === "cto_md") {
-          return (
-            <div className="attendance-app-message">
-              <h2>Overall Progress</h2>
-              <p>This page has not been connected yet.</p>
-            </div>
-          );
-        }
-
-        return (
-          <div className="attendance-app-message" role="alert">
-            <h2>Access Denied</h2>
-            <p>This page is only available to the CTO / Managing Director.</p>
-          </div>
-        );
-
-      case "Admin Dashboard":
-        if (
-          ["super_admin", "superuser"].includes(currentRole)
-        ) {
-          return <SuperAdminDashboard />;
-        }
-
-        return (
-          <div className="attendance-app-message" role="alert">
-            <h2>Access Denied</h2>
-            <p>
-              The Super Admin Dashboard is only available to
-              Super Admin.
-            </p>
           </div>
         );
 
       case "Attendance":
         return renderAttendancePage();
 
-      case "Tasks & Projects":
-        switch (currentRole) {
-          case "employee":
-            return <EmployeeTasks />;
-
-          case "manager":
-            return <Tasks />;
-
-          case "hr":
-            return (
-              <div className="attendance-app-message">
-                <h2>HR Tasks &amp; Projects</h2>
-                <p>
-                  The HR task monitoring page has not been
-                  connected yet.
-                </p>
-              </div>
-            );
-
-          case "cto_md":
-            return <CTOTasks />;
-
-          case "ceo":
-          case "admin":
-          case "super_admin":
-          case "superuser":
-            return <CEOTasks />;
-
-          default:
-            return (
-              <div className="attendance-app-message" role="alert">
-                Your account role is not recognized.
-              </div>
-            );
-        }
-
-      case "Settings":
-        if (
-          currentRole === "super_admin" ||
-          currentRole === "superuser"
-        ) {
-          return <SuperAdminSettings />;
-        }
-
-        return (
-          <RoleSettings
-            role={currentRole}
-            section={settingsSection}
-            theme={theme}
-            onThemeChange={handleThemeChange}
-          />
-        );
-
       case "Employees":
-        if (currentRole === "manager") {
-          return <ManagerEmployees />;
-        }
-
         if (currentRole === "cto_md") {
           return <CTOEmployees />;
+        }
+
+        if (currentRole === "ceo") {
+          return <CEOEmployees />;
+        }
+
+        if (currentRole === "manager") {
+          return <ManagerEmployees />;
         }
 
         return (
           <div className="attendance-app-message" role="alert">
             <h2>Access Denied</h2>
-            <p>
-              Employees is only available to managers and the
-              CTO / Managing Director.
-            </p>
+            <p>You do not have access to this page.</p>
           </div>
         );
 
@@ -693,33 +651,172 @@ export default function App() {
         );
 
       case "Company Attendance":
-        if (currentRole === "hr") {
-          return <CompanyAttendance />;
-        }
-
         if (currentRole === "cto_md") {
           return <CTOCompanyAttendance />;
         }
 
         if (currentRole === "ceo") {
-          return <CEOAttendance role={currentRole} />;
+          return <CEOCompanyAttendance />;
+        }
+
+        if (["hr", "super_admin", "superuser"].includes(currentRole)) {
+          return <CompanyAttendance />;
+        }
+
+        return (
+          <div className="attendance-app-message" role="alert">
+            <h2>Access Denied</h2>
+            <p>You do not have access to this page.</p>
+          </div>
+        );
+
+      case "Manager Profiles":
+        if (currentRole === "cto_md") {
+          return <CTOManagerProfiles />;
         }
 
         return (
           <div className="attendance-app-message" role="alert">
             <h2>Access Denied</h2>
             <p>
-              Company-wide attendance is only available to
-              authorized roles.
+              Manager Profiles are only available to the CTO / Managing Director.
             </p>
+          </div>
+        );
+
+      case "Overall Progress":
+        if (currentRole === "cto_md") {
+          return <CTOTasks />;
+        }
+
+        return (
+          <div className="attendance-app-message" role="alert">
+            <h2>Access Denied</h2>
+            <p>
+              Overall Progress is only available to the CTO / Managing Director.
+            </p>
+          </div>
+        );
+
+      case "Tasks & Projects":
+        if (currentRole === "employee") {
+          return <EmployeeTasks />;
+        }
+
+        if (currentRole === "manager") {
+          return <Tasks />;
+        }
+
+        if (currentRole === "cto_md") {
+          return <CTOTasks />;
+        }
+
+        if (
+          ["ceo", "admin", "super_admin", "superuser"].includes(currentRole)
+        ) {
+          return <CEOTasks />;
+        }
+
+        if (currentRole === "hr") {
+          return (
+            <div className="attendance-app-message">
+              <h2>Task Monitoring</h2>
+              <p>Task monitoring is not configured for this page yet.</p>
+            </div>
+          );
+        }
+
+        return (
+          <div className="attendance-app-message" role="alert">
+            <h2>Access Denied</h2>
+            <p>You do not have access to this page.</p>
+          </div>
+        );
+
+      case "Monthly Report":
+        if (MONTHLY_REPORT_ROLES.includes(currentRole)) {
+          return <EmployeeMonthlyReport />;
+        }
+
+        return (
+          <div className="attendance-app-message" role="alert">
+            <h2>Access Denied</h2>
+            <p>You do not have access to this page.</p>
+          </div>
+        );
+
+      case "Holidays":
+        if (currentRole === "hr") {
+          return <HRHolidays />;
+        }
+
+        return (
+          <div className="attendance-app-message" role="alert">
+            <h2>Access Denied</h2>
+            <p>Holiday Management is only available to HR.</p>
+          </div>
+        );
+
+      case "Leave Management":
+        if (currentRole === "ceo") {
+          return <CEOLeaveManagement />;
+        }
+
+        return (
+          <div className="attendance-app-message" role="alert">
+            <h2>Access Denied</h2>
+            <p>Leave Management is only available to the CEO.</p>
+          </div>
+        );
+
+      case "Admin Dashboard":
+        if (ADMIN_ROLES.includes(currentRole)) {
+          return <SuperAdminDashboard />;
+        }
+
+        return (
+          <div className="attendance-app-message" role="alert">
+            <h2>Access Denied</h2>
+            <p>You do not have access to this page.</p>
+          </div>
+        );
+
+      case "Settings":
+        if (ADMIN_ROLES.includes(currentRole)) {
+          return <SuperAdminSettings />;
+        }
+
+        return (
+          <RoleSettings
+            role={currentRole}
+            section={settingsSection}
+            onSectionChange={setSettingsSection}
+            theme={theme}
+            onThemeChange={handleThemeChange}
+          />
+        );
+
+      case "Calendar":
+        return (
+          <div className="attendance-app-message">
+            <h2>Calendar</h2>
+            <p>Calendar content is not configured in this App.jsx.</p>
+          </div>
+        );
+
+      case "Documents":
+        return (
+          <div className="attendance-app-message">
+            <h2>Documents</h2>
+            <p>Documents content is not configured in this App.jsx.</p>
           </div>
         );
 
       default:
         return (
           <div className="attendance-app-message">
-            <h2>{PAGE_TITLES[page] || page}</h2>
-            <p>This page has not been connected yet.</p>
+            <h2>Page Not Found</h2>
+            <p>The selected page is not available.</p>
           </div>
         );
     }
@@ -727,8 +824,8 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="app-loading" role="status">
-        Loading your account...
+      <div className="app-loading">
+        <p>Loading your workspace...</p>
       </div>
     );
   }
@@ -748,34 +845,34 @@ export default function App() {
   }
 
   const settingsHasOwnHeader =
-    page === "Settings" && currentRole !== "super_admin";
+    page === "Settings" && !ADMIN_ROLES.includes(currentRole);
 
   const showGlobalHeader =
     !PAGES_WITH_OWN_HEADER.includes(page) &&
     !settingsHasOwnHeader;
 
+  const headerTitle =
+    page === "Dashboard" && currentRole === "ceo"
+      ? "CEO Dashboard"
+      : page === "Dashboard" && currentRole === "cto_md"
+        ? "CTO / Managing Director Dashboard"
+        : PAGE_TITLES[page] || page;
+
   return (
     <div className="app" data-theme={theme}>
-      <Sidebar
-        onNavigate={handleNav}
-        onSection={handleSettingsSection}
-        settingsRole={currentRole}
-        onLogout={logout}
-      />
-
+    <Sidebar
+  onNavigate={handleNav}
+  onSection={handleSettingsSection}
+  settingsRole={currentRole}
+  onLogout={logout}
+/>
       <main className="main">
         {showGlobalHeader && (
-          <header className="header">
-            <div>
-              <h1 className="header-title">
-                {PAGE_TITLES[page] || page}
-              </h1>
-
-              <p className="header-date">
-                {user.name || user.email || "User"} · {currentRole}
-              </p>
-            </div>
-          </header>
+          <PageHeader
+            eyebrow={`${currentRole.replace(/_/g, " ").toUpperCase()} WORKSPACE`}
+            title={headerTitle}
+            description={`${user.name || user.email || "User"} · ${currentRole.replace(/_/g, " ")}`}
+          />
         )}
 
         <section className="app-page-content">

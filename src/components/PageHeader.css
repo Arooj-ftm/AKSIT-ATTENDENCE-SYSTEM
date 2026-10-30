@@ -1,8 +1,8 @@
-/* =========================================
+/* ========================================
    SHARED PAGE HEADER
    Used by Employee, Manager, HR, CEO,
    Super User and Admin pages.
-========================================= */
+======================================== */
 
 .page-header {
     box-sizing: border-box;
@@ -42,6 +42,10 @@
     text-transform: uppercase;
 }
 
+.page-header__eyebrow svg {
+    flex-shrink: 0;
+}
+
 /* Main title and action buttons */
 
 .page-header__main {
@@ -54,7 +58,7 @@
 }
 
 .page-header__content {
-    flex: 1;
+    flex: 1 1 auto;
     min-width: 0;
 }
 
@@ -93,7 +97,8 @@
     flex-wrap: wrap;
     gap: 10px;
 
-    flex-shrink: 0;
+    flex: 0 0 auto;
+    min-width: 0;
 }
 
 /* Refresh button */
@@ -199,9 +204,15 @@
         box-shadow 0.2s ease;
 }
 
-.page-header__actions button:not(.page-header__refresh):hover {
+.page-header__actions button:not(.page-header__refresh):hover:not(:disabled) {
     background: #f7faff;
     border-color: #a9bfdf;
+    box-shadow: 0 3px 10px rgba(41, 75, 128, 0.08);
+}
+
+.page-header__actions button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
 }
 
 /* Tablet */
@@ -288,13 +299,12 @@
 /* Respect the user's reduced-motion setting */
 
 @media (prefers-reduced-motion: reduce) {
-
     .page-header__refresh,
     .page-header__actions button {
         transition: none;
     }
 
     .page-header__refresh-icon.is-spinning {
-        animation-duration: 2s;
+        animation: none;
     }
 }

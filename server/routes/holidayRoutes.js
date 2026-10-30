@@ -1,6 +1,5 @@
 
 const express = require("express");
-const mongoose = require("mongoose");
 
 const Holiday = require("../models/Holiday");
 
@@ -12,294 +11,301 @@ const {
 
 const router = express.Router();
 
-// Authentication and mandatory password change enforcement.
 router.use(authenticate, requirePasswordChangeComplete);
 
-function sendError(res, status, message) {
-    return res.status(status).json({
-        success: false,
-        message,
-    });
-}
+const HR_ROLES = ["hr"];
 
-function isValidDate(value) {
+function isValidDate(date) {
     if (
-        typeof value !== "string" ||
-        !/^\d{4}-\d{2}-\d{2}$/.test(value)
+        typeof date !== "string" ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(date)
     ) {
         return false;
     }
 
-    const date = new Date(`${value}T00:00:00.000Z`);
+    const parsed = new Date(`${date}T00:00:00.000Z`);
 
     return (
-        !Number.isNaN(date.getTime()) &&
-        date.toISOString().slice(0, 10) === value
+        !Number.isNaN(parsed.getTime()) &&
+        parsed.toISOString().slice(0, 10) === date
     );
 }
 
-function validateHolidayFields(body, partial = false) {
-    const { name, date, type, description } = body;
+function validateHolidayFields(body, isUpdate = false) {
+    const errors = [];
 
-    if (!partial || name !== undefined) {
+    if (!isUpdate || body.name !== undefined) {
         if (
-            typeof name !== "string" ||
-            !name.trim() ||
-            name.trim().length > 150
+            typeof body.name !== "string" ||
+            !body.name.trim() ||
+            body.name.trim().length > 150
         ) {
-            return "Holiday name is required and must not exceed 150 characters.";
+            errors.push(
+                "Holiday name is required and must not exceed 150 characters."
+            );
         }
     }
 
-    if (!partial || date !== undefined) {
-        if (!isValidDate(date)) {
-            return "Provide a valid holiday date in YYYY-MM-DD format.";
+    if (!isUpdate || body.date !== undefined) {
+        if (!isValidDate(body.date)) {
+            errors.push("Date must be a valid date in YYYY-MM-DD format.");
         }
     }
 
-    if (type !== undefined) {
-        if (!["public", "company"].includes(type)) {
-            return "Holiday type must be public or company.";
-        }
-    } else if (!partial) {
-        return "Holiday type is required.";
-    }
-
-    if (description !== undefined) {
+    if (!isUpdate || body.type !== undefined) {
         if (
-            typeof description !== "string" ||
-            description.length > 500
+            body.type !== undefined &&
+            !["public", "company"].includes(body.type)
         ) {
-            return "Description must not exceed 500 characters.";
+            errors.push("Type must be public or company.");
         }
     }
 
-    return null;
+    if (body.description !== undefined) {
+        if (
+            typeof body.description !== "string" ||
+            body.description.length > 1000
+        ) {
+            errors.push(
+                "Description must be text and cannot exceed 1000 characters."
+            );
+        }
+    }
+
+    if (
+        body.isWorkingDay !== undefined &&
+        typeof body.isWorkingDay !== "boolean"
+    ) {
+        errors.push("isWorkingDay must be true or false.");
+    }
+
+    return errors;
 }
 
-function handleDatabaseError(res, error) {
-    if (error.code === 11000) {
-        return sendError(
-            res,
-            409,
-            "A holiday already exists for this date."
-        );
-    }
-
-    console.error("Holiday route error:", error.message);
-
-    return sendError(
-        res,
-        500,
-        "Unable to process holiday request."
-    );
-}
-
-/*
- * GET ALL HOLIDAYS
- * GET /api/holidays
- *
- * Optional query: ?year=2027
- *
- * All authenticated users whose password change is complete
- * can view holidays.
- */
+// GET /api/holidays?year=2026
 router.get("/", async (req, res) => {
     try {
         const filter = {};
 
         if (req.query.year !== undefined) {
-            const yearText = String(req.query.year);
-
-            if (!/^\d{4}$/.test(yearText)) {
-                return sendError(
-                    res,
-                    400,
-                    "Year must be provided in YYYY format."
-                );
+            if (!/^\d{4}$/.test(req.query.year)) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Year must use YYYY format.",
+                });
             }
 
-            const year = Number(yearText);
+            const year = Number(req.query.year);
 
-            if (year < 2000 || year > 9999) {
-                return sendError(
-                    res,
-                    400,
-                    "Invalid holiday year."
-                );
+            if (year < 1900 || year > 9999) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Year must be between 1900 and 9999.",
+                });
             }
 
             filter.date = {
-                $gte: `${year}-01-01`,
-                $lte: `${year}-12-31`,
+                $gte: `${req.query.year}-01-01`,
+                $lt: year === 9999
+                    ? "9999-12-32"
+                    : `${String(year + 1).padStart(4, "0")}-01-01`,
             };
         }
 
         const holidays = await Holiday.find(filter)
-            .populate("createdBy", "name email role")
-            .sort({ date: 1, name: 1 })
+            .populate("createdBy", "name email")
+            .sort({ date: 1 })
             .lean();
+
+        // Older documents without isWorkingDay are non-working holidays.
+        const normalizedHolidays = holidays.map((holiday) => ({
+            ...holiday,
+            isWorkingDay: holiday.isWorkingDay === true,
+        }));
 
         return res.json({
             success: true,
-            count: holidays.length,
-            holidays,
+            holidays: normalizedHolidays,
         });
     } catch (error) {
-        return handleDatabaseError(res, error);
+        console.error("Get holidays error:", error.message);
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to load holidays.",
+        });
     }
 });
 
-/*
- * CREATE HOLIDAY
- * POST /api/holidays
- *
- * HR only.
- */
-router.post("/", allowRoles("hr"), async (req, res) => {
-    try {
-        const validationError = validateHolidayFields(req.body);
+// POST /api/holidays — HR only
+router.post(
+    "/",
+    allowRoles(...HR_ROLES),
+    async (req, res) => {
+        try {
+            const errors = validateHolidayFields(req.body);
 
-        if (validationError) {
-            return sendError(res, 400, validationError);
-        }
-
-        const holiday = await Holiday.create({
-            name: req.body.name.trim(),
-            date: req.body.date,
-            type: req.body.type,
-            description: (req.body.description || "").trim(),
-            createdBy: req.user._id || req.user.id,
-        });
-
-        const populatedHoliday = await Holiday.findById(holiday._id)
-            .populate("createdBy", "name email role")
-            .lean();
-
-        return res.status(201).json({
-            success: true,
-            message: "Holiday created successfully.",
-            holiday: populatedHoliday,
-        });
-    } catch (error) {
-        return handleDatabaseError(res, error);
-    }
-});
-
-/*
- * UPDATE HOLIDAY
- * PATCH /api/holidays/:id
- *
- * HR only.
- */
-router.patch("/:id", allowRoles("hr"), async (req, res) => {
-    try {
-        if (!mongoose.isValidObjectId(req.params.id)) {
-            return sendError(res, 400, "Invalid holiday ID.");
-        }
-
-        const allowedFields = [
-            "name",
-            "date",
-            "type",
-            "description",
-        ];
-
-        const submittedFields = Object.keys(req.body);
-
-        if (
-            submittedFields.length === 0 ||
-            submittedFields.some(
-                (field) => !allowedFields.includes(field)
-            )
-        ) {
-            return sendError(
-                res,
-                400,
-                "Provide valid holiday fields to update."
-            );
-        }
-
-        const validationError = validateHolidayFields(
-            req.body,
-            true
-        );
-
-        if (validationError) {
-            return sendError(res, 400, validationError);
-        }
-
-        const updates = {};
-
-        if (req.body.name !== undefined) {
-            updates.name = req.body.name.trim();
-        }
-
-        if (req.body.date !== undefined) {
-            updates.date = req.body.date;
-        }
-
-        if (req.body.type !== undefined) {
-            updates.type = req.body.type;
-        }
-
-        if (req.body.description !== undefined) {
-            updates.description = req.body.description.trim();
-        }
-
-        const holiday = await Holiday.findByIdAndUpdate(
-            req.params.id,
-            { $set: updates },
-            {
-                new: true,
-                runValidators: true,
+            if (errors.length) {
+                return res.status(400).json({
+                    success: false,
+                    message: errors[0],
+                    errors,
+                });
             }
-        )
-            .populate("createdBy", "name email role")
-            .lean();
 
-        if (!holiday) {
-            return sendError(res, 404, "Holiday not found.");
+            const holiday = await Holiday.create({
+                name: req.body.name.trim(),
+                date: req.body.date,
+                type: req.body.type || "public",
+                description: (req.body.description || "").trim(),
+                isWorkingDay: req.body.isWorkingDay === true,
+                createdBy: req.user._id || req.user.id,
+            });
+
+            return res.status(201).json({
+                success: true,
+                message: holiday.isWorkingDay
+                    ? "Working day saved successfully."
+                    : "Holiday saved successfully.",
+                holiday,
+            });
+        } catch (error) {
+            if (error.code === 11000) {
+                return res.status(409).json({
+                    success: false,
+                    message: "A holiday or working-day entry already exists for this date.",
+                });
+            }
+
+            console.error("Create holiday error:", error.message);
+
+            return res.status(500).json({
+                success: false,
+                message: "Unable to create holiday.",
+            });
         }
-
-        return res.json({
-            success: true,
-            message: "Holiday updated successfully.",
-            holiday,
-        });
-    } catch (error) {
-        return handleDatabaseError(res, error);
     }
-});
+);
 
-/*
- * DELETE HOLIDAY
- * DELETE /api/holidays/:id
- *
- * HR only.
- */
-router.delete("/:id", allowRoles("hr"), async (req, res) => {
-    try {
-        if (!mongoose.isValidObjectId(req.params.id)) {
-            return sendError(res, 400, "Invalid holiday ID.");
+// PATCH /api/holidays/:id — HR only
+router.patch(
+    "/:id",
+    allowRoles(...HR_ROLES),
+    async (req, res) => {
+        try {
+            const allowedFields = [
+                "name",
+                "date",
+                "type",
+                "description",
+                "isWorkingDay",
+            ];
+
+            const updates = {};
+
+            for (const field of allowedFields) {
+                if (req.body[field] !== undefined) {
+                    updates[field] = req.body[field];
+                }
+            }
+
+            if (!Object.keys(updates).length) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Provide at least one field to update.",
+                });
+            }
+
+            const errors = validateHolidayFields(updates, true);
+
+            if (errors.length) {
+                return res.status(400).json({
+                    success: false,
+                    message: errors[0],
+                    errors,
+                });
+            }
+
+            if (updates.name !== undefined) {
+                updates.name = updates.name.trim();
+            }
+
+            if (updates.description !== undefined) {
+                updates.description = updates.description.trim();
+            }
+
+            const holiday = await Holiday.findByIdAndUpdate(
+                req.params.id,
+                { $set: updates },
+                {
+                    new: true,
+                    runValidators: true,
+                }
+            ).populate("createdBy", "name email");
+
+            if (!holiday) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Holiday not found.",
+                });
+            }
+
+            return res.json({
+                success: true,
+                message: "Holiday updated successfully.",
+                holiday: {
+                    ...holiday.toObject(),
+                    isWorkingDay: holiday.isWorkingDay === true,
+                },
+            });
+        } catch (error) {
+            if (error.code === 11000) {
+                return res.status(409).json({
+                    success: false,
+                    message: "An entry already exists for this date.",
+                });
+            }
+
+            console.error("Update holiday error:", error.message);
+
+            return res.status(500).json({
+                success: false,
+                message: "Unable to update holiday.",
+            });
         }
-
-        const holiday = await Holiday.findByIdAndDelete(
-            req.params.id
-        );
-
-        if (!holiday) {
-            return sendError(res, 404, "Holiday not found.");
-        }
-
-        return res.json({
-            success: true,
-            message: "Holiday deleted successfully.",
-            holidayId: holiday._id,
-        });
-    } catch (error) {
-        return handleDatabaseError(res, error);
     }
-});
+);
+
+// DELETE /api/holidays/:id — HR only
+router.delete(
+    "/:id",
+    allowRoles(...HR_ROLES),
+    async (req, res) => {
+        try {
+            const holiday = await Holiday.findByIdAndDelete(
+                req.params.id
+            );
+
+            if (!holiday) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Holiday not found.",
+                });
+            }
+
+            return res.json({
+                success: true,
+                message: "Holiday deleted successfully.",
+            });
+        } catch (error) {
+            console.error("Delete holiday error:", error.message);
+
+            return res.status(500).json({
+                success: false,
+                message: "Unable to delete holiday.",
+            });
+        }
+    }
+);
 
 module.exports = router;

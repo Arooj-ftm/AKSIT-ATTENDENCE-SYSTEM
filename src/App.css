@@ -50,8 +50,8 @@ button {
    SIDEBAR
 ======================================== */
 
-.app>aside,
-.app>.sidebar {
+.app > aside,
+.app > .sidebar {
     flex: 0 0 auto;
     height: 100vh;
     min-height: 0;
@@ -65,7 +65,7 @@ button {
    MAIN CONTENT
 ======================================== */
 
-.app>.main,
+.app > .main,
 .main {
     flex: 1 1 0;
     width: auto;
@@ -82,6 +82,27 @@ button {
     background: #f8fafc;
 }
 
+/* ========================================
+   SHARED PAGE HEADER LAYOUT
+======================================== */
+
+.app > .main > .page-header,
+.main > .page-header {
+    flex: 0 0 auto;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+}
+
+.app > .main > .page-header + .app-page-content,
+.main > .page-header + .app-page-content {
+    margin-top: 0;
+}
+
+/* ========================================
+   PAGE CONTENT WRAPPER
+======================================== */
+
 .app-page-content {
     flex: 0 0 auto;
     width: 100%;
@@ -91,7 +112,7 @@ button {
     padding: 0;
 }
 
-.app-page-content>.attendance-page {
+.app-page-content > .attendance-page {
     width: 100%;
     min-width: 0;
     max-width: 100%;
@@ -100,8 +121,10 @@ button {
 }
 
 /* ========================================
-   SHARED DARK HEADER
-/* SHARED DARK NAVY HEADER */
+   LEGACY DARK HEADER STYLES
+   Retained for components that still use
+   the original .header class.
+======================================== */
 
 .header {
     flex: 0 0 auto;
@@ -211,42 +234,6 @@ button {
     }
 }
 
-@media (max-width: 700px) {
-    .header {
-        align-items: flex-start;
-        padding: 17px;
-        gap: 14px;
-    }
-
-    .header-title {
-        font-size: 20px;
-    }
-
-    .header-actions {
-        gap: 7px;
-    }
-
-    .header-refresh-btn,
-    .header-logout-btn {
-        min-height: 38px;
-        padding: 0 10px;
-        gap: 6px;
-        font-size: 12px;
-    }
-}
-
-@media (max-width: 460px) {
-    .header {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .header-actions {
-        justify-content: flex-start;
-    }
-}
-
-
 /* ========================================
    LOGOUT / PRIMARY APP BUTTON
 ======================================== */
@@ -257,22 +244,19 @@ button {
     align-items: center;
     justify-content: center;
     gap: 8px;
-
     min-height: 40px;
     padding: 10px 16px;
-
     border: 1px solid rgba(255, 255, 255, 0.24);
     border-radius: 10px;
-
     background: rgba(255, 255, 255, 0.1);
     color: #ffffff;
-
     font-size: 13px;
     font-weight: 650;
     line-height: 1.4;
-
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-    transition: background 0.2s ease, border-color 0.2s ease,
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
         transform 0.2s ease;
 }
 
@@ -304,7 +288,9 @@ button {
     border-radius: 12px;
     background: #ffffff;
     color: #94a3b8;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .search:focus-within {
@@ -338,7 +324,7 @@ button {
     min-width: 0;
 }
 
-.stats>* {
+.stats > * {
     min-width: 0;
 }
 
@@ -407,7 +393,10 @@ button {
     background: #ffffff;
     color: #475569;
     font-size: 14px;
-    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        color 0.2s ease;
 }
 
 .chip:hover {
@@ -436,7 +425,7 @@ button {
     padding-bottom: 40px;
 }
 
-.team-grid>* {
+.team-grid > * {
     min-width: 0;
 }
 
@@ -473,7 +462,7 @@ button {
    PAGE CONTENT LAYOUT
 ======================================== */
 
-.app>.manager-employees-page {
+.app > .manager-employees-page {
     flex: 1 1 auto;
     width: 0;
     min-width: 0;
@@ -482,7 +471,7 @@ button {
     overflow: visible;
 }
 
-.app>.main:has(.employee-leaves-page) {
+.app > .main:has(.employee-leaves-page) {
     gap: 24px;
 }
 
@@ -497,8 +486,7 @@ button {
 }
 
 @media (min-width: 768px) {
-
-    .app>.main,
+    .app > .main,
     .main {
         padding: 28px 32px;
         gap: 28px;
@@ -533,9 +521,32 @@ button {
    MOBILE
 ======================================== */
 
-@media (max-width: 639px) {
+@media (max-width: 700px) {
+    .header {
+        align-items: flex-start;
+        padding: 17px;
+        gap: 14px;
+    }
 
-    .app>.main,
+    .header-title {
+        font-size: 20px;
+    }
+
+    .header-actions {
+        gap: 7px;
+    }
+
+    .header-refresh-btn,
+    .header-logout-btn {
+        min-height: 38px;
+        padding: 0 10px;
+        gap: 6px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 639px) {
+    .app > .main,
     .main {
         padding: 16px;
         gap: 20px;
@@ -582,9 +593,19 @@ button {
     }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 460px) {
+    .header {
+        flex-direction: column;
+        align-items: stretch;
+    }
 
-    .app>.main,
+    .header-actions {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 400px) {
+    .app > .main,
     .main {
         padding: 12px;
         gap: 16px;
@@ -613,7 +634,6 @@ button {
 ======================================== */
 
 @media (prefers-reduced-motion: reduce) {
-
     *,
     *::before,
     *::after {

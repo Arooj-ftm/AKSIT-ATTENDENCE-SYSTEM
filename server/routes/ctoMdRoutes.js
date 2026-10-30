@@ -12,15 +12,9 @@ const {
 
 const router = express.Router();
 
-// All CTO / Managing Director routes require authentication.
-router.use(
-    authenticate,
-    allowRoles("cto_md"),
-    requirePasswordChangeComplete
-);
+router.use(authenticate, requirePasswordChangeComplete);
 
-// Company-wide employee access.
-// Exclude the system super admin and CTO/Managing Director.
+// Company-wide employees; exclude system super admin and CTO/MD.
 const COMPANY_EMPLOYEE_FILTER = {
     role: {
         $nin: ["super_admin", "cto_md"],
@@ -33,11 +27,11 @@ const COMPANY_EMPLOYEE_FILTER = {
 function getToday() {
     const now = new Date();
 
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
+    return [
+        now.getFullYear(),
+        String(now.getMonth() + 1).padStart(2, "0"),
+        String(now.getDate()).padStart(2, "0"),
+    ].join("-");
 }
 
 function isValidDate(date) {
@@ -64,14 +58,9 @@ function isValidMonth(month) {
         return false;
     }
 
-    const [year, monthNumber] = month.split("-").map(Number);
+    const [year] = month.split("-").map(Number);
 
-    return (
-        year >= 1900 &&
-        year <= 9999 &&
-        monthNumber >= 1 &&
-        monthNumber <= 12
-    );
+    return year >= 1900 && year <= 9999;
 }
 
 function getMonthDateRange(month) {
@@ -114,16 +103,22 @@ function getAttendanceStatus(record) {
         return "absent";
     }
 
-    return record.status || "present";
+    return record.status === "on_leave"
+        ? "on_leave"
+        : "present";
 }
 
-function calculateSummary(employees, records) {
-    const totalEmployees = employees.length;
-
+function calculateDailySummary(employees, records) {
     const present = records.filter(
-        (record) =>
-            record.status === "present" ||
-            Boolean(record.checkIn)
+        (record) => record.status === "present"
+    ).length;
+
+    const onLeave = records.filter(
+        (record) => record.status === "on_leave"
+    ).length;
+
+    const absent = records.filter(
+        (record) => record.status === "absent"
     ).length;
 
     const checkedIn = records.filter(
@@ -134,28 +129,20 @@ function calculateSummary(employees, records) {
         (record) => Boolean(record.checkOut)
     ).length;
 
-    const absent = records.filter(
-        (record) => record.status === "absent"
-    ).length;
-
-    const onLeave = records.filter(
-        (record) => record.status === "leave" ||
-            record.status === "on_leave"
-    ).length;
-
     return {
-        totalEmployees,
-        total: totalEmployees,
+        totalEmployees: employees.length,
+        total: employees.length,
         present,
         absent,
+        onLeave,
         checkedIn,
         checkedOut,
-        onLeave,
+        attendanceRecords: records.length,
     };
 }
 
 // GET /api/cto-md/employees
-// Active employees from all departments.
+// Active employees across company departments.
 router.get("/employees", async (req, res) => {
     try {
         const employees = await User.find(
@@ -184,10 +171,7 @@ router.get("/employees", async (req, res) => {
             })),
         });
     } catch (error) {
-        console.error(
-            "CTO/MD company employees error:",
-            error
-        );
+        console.error("CTO/MD company employees error:", error);
 
         return res.status(500).json({
             success: false,
@@ -198,198 +182,216 @@ router.get("/employees", async (req, res) => {
 
 // GET /api/cto-md/company-attendance
 //
-// Supports:
+// Daily:
 // ?date=YYYY-MM-DD&view=daily
+//
+// Monthly:
 // ?month=YYYY-MM&view=monthly
 //
-// Daily view includes active employees without an attendance
-// record, so the frontend can show them as absent.
-router.get("/company-attendance", async (req, res) => {
-    try {
-        const view = req.query.view === "monthly"
-            ? "monthly"
-            : "daily";
+// Optional:
+// &department=Engineering
+//
+// Accessible to CTO/MD and CEO, as in the existing route.
+router.get(
+    "/company-attendance",
+    allowRoles("cto_md", "ceo"),
+    async (req, res) => {
+        try {
+            const view =
+                req.query.view === "monthly"
+                    ? "monthly"
+                    : "daily";
 
-        const department =
-            typeof req.query.department === "string"
-                ? req.query.department.trim()
-                : "";
+            const department =
+                typeof req.query.department === "string"
+                    ? req.query.department.trim()
+                    : "";
 
-        const date = req.query.date || getToday();
+            const date = req.query.date || getToday();
+            const month = req.query.month || date.slice(0, 7);
 
-        const month = req.query.month ||
-            date.slice(0, 7);
+            if (!isValidDate(date)) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Date must use YYYY-MM-DD format.",
+                });
+            }
 
-        if (!isValidDate(date)) {
-            return res.status(400).json({
-                success: false,
-                message: "Date must use YYYY-MM-DD format.",
-            });
-        }
+            if (!isValidMonth(month)) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Month must use YYYY-MM format.",
+                });
+            }
 
-        if (!isValidMonth(month)) {
-            return res.status(400).json({
-                success: false,
-                message: "Month must use YYYY-MM format.",
-            });
-        }
+            const employeeFilter = {
+                ...COMPANY_EMPLOYEE_FILTER,
+            };
 
-        const employeeFilter = {
-            ...COMPANY_EMPLOYEE_FILTER,
-        };
+            if (department) {
+                employeeFilter.department = department;
+            }
 
-        if (department) {
-            employeeFilter.department = department;
-        }
+            const employees = await User.find(employeeFilter)
+                .select(
+                    "name email role department designation isActive"
+                )
+                .sort({ name: 1 })
+                .lean();
 
-        const employees = await User.find(employeeFilter)
-            .select(
-                "name email role department designation isActive"
-            )
-            .sort({ name: 1 })
-            .lean();
+            const employeeIds = employees.map(
+                (employee) => employee._id
+            );
 
-        const employeeIds = employees.map(
-            (employee) => employee._id
-        );
+            const attendanceDateFilter =
+                view === "monthly"
+                    ? getMonthDateRange(month)
+                    : date;
 
-        const attendanceDateFilter = view === "monthly"
-            ? getMonthDateRange(month)
-            : date;
-
-        const attendanceQuery = {
-            userId: {
-                $in: employeeIds,
-            },
-            date: attendanceDateFilter,
-        };
-
-        const attendanceRecords = await Attendance.find(
-            attendanceQuery
-        )
-            .populate(
-                "userId",
-                "name email role department designation"
-            )
-            .sort({
-                date: 1,
-                checkIn: 1,
+            const attendanceRecords = await Attendance.find({
+                userId: {
+                    $in: employeeIds,
+                },
+                date: attendanceDateFilter,
             })
-            .lean();
+                .sort({
+                    date: 1,
+                    checkIn: 1,
+                })
+                .lean();
 
-        let records;
+            const employeesById = new Map(
+                employees.map((employee) => [
+                    getEmployeeId(employee),
+                    employee,
+                ])
+            );
 
-        if (view === "daily") {
-            const attendanceByUserId = new Map();
+            let records;
 
-            for (const record of attendanceRecords) {
-                if (record.userId?._id) {
+            if (view === "daily") {
+                const attendanceByUserId = new Map();
+
+                for (const record of attendanceRecords) {
                     attendanceByUserId.set(
-                        String(record.userId._id),
+                        String(record.userId),
                         record
                     );
                 }
+
+                records = employees.map((employee) => {
+                    const employeeId = getEmployeeId(employee);
+                    const attendance =
+                        attendanceByUserId.get(employeeId);
+
+                    const details = getEmployeeDetails(employee);
+
+                    if (attendance) {
+                        return {
+                            ...attendance,
+                            userId: details,
+                            employee: details,
+                            date,
+                            status: getAttendanceStatus(attendance),
+                        };
+                    }
+
+                    return {
+                        _id: `absent-${employeeId}-${date}`,
+                        userId: details,
+                        employee: details,
+                        date,
+                        status: "absent",
+                        checkIn: null,
+                        checkOut: null,
+                    };
+                });
+            } else {
+                records = attendanceRecords.map((record) => {
+                    const employee = employeesById.get(
+                        String(record.userId)
+                    );
+
+                    const details = employee
+                        ? getEmployeeDetails(employee)
+                        : null;
+
+                    return {
+                        ...record,
+                        userId: details || record.userId,
+                        employee: details,
+                        status: getAttendanceStatus(record),
+                    };
+                });
             }
 
-            records = employees.map((employee) => {
-                const employeeId = getEmployeeId(employee);
+            let summary;
 
-                const attendance = attendanceByUserId.get(
-                    employeeId
+            if (view === "daily") {
+                summary = calculateDailySummary(
+                    employees,
+                    records
+                );
+            } else {
+                const presentRecords = records.filter(
+                    (record) => record.status === "present"
                 );
 
-                if (attendance) {
-                    return {
-                        ...attendance,
-                        userId: getEmployeeDetails(employee),
-                        employee: getEmployeeDetails(employee),
-                        date,
-                        status: getAttendanceStatus(attendance),
-                    };
-                }
+                const leaveRecords = records.filter(
+                    (record) => record.status === "on_leave"
+                );
 
-                return {
-                    _id: `absent-${employeeId}-${date}`,
-                    userId: getEmployeeDetails(employee),
-                    employee: getEmployeeDetails(employee),
-                    date,
-                    status: "absent",
-                    checkIn: null,
-                    checkOut: null,
-                    workedMinutes: 0,
+                const employeesWithAttendance = new Set(
+                    records.map((record) => {
+                        const id =
+                            record.employee?.id ||
+                            record.employee?._id ||
+                            record.userId?.id ||
+                            record.userId?._id ||
+                            record.userId;
+
+                        return String(id);
+                    })
+                );
+
+                summary = {
+                    totalEmployees: employees.length,
+                    total: employees.length,
+                    attendanceRecords: records.length,
+                    present: presentRecords.length,
+                    onLeave: leaveRecords.length,
+                    absent: Math.max(
+                        0,
+                        employees.length -
+                            employeesWithAttendance.size
+                    ),
+                    checkedIn: records.filter(
+                        (record) => Boolean(record.checkIn)
+                    ).length,
+                    checkedOut: records.filter(
+                        (record) => Boolean(record.checkOut)
+                    ).length,
                 };
+            }
+
+            return res.status(200).json({
+                success: true,
+                view,
+                date: view === "daily" ? date : undefined,
+                month,
+                employees,
+                records,
+                summary,
             });
-        } else {
-            records = attendanceRecords.map((record) => {
-                const employee = record.userId;
+        } catch (error) {
+            console.error("Company attendance error:", error);
 
-                return {
-                    ...record,
-                    employee: employee
-                        ? getEmployeeDetails(employee)
-                        : null,
-                };
+            return res.status(500).json({
+                success: false,
+                message: "Unable to fetch company attendance.",
             });
         }
-
-        const summary = view === "daily"
-            ? calculateSummary(employees, records)
-            : {
-                totalEmployees: employees.length,
-                total: employees.length,
-                attendanceRecords: records.length,
-                present: records.filter(
-                    (record) =>
-                        record.status === "present" ||
-                        Boolean(record.checkIn)
-                ).length,
-                absent: Math.max(
-                    0,
-                    employees.length -
-                    new Set(
-                        records
-                            .filter(
-                                (record) =>
-                                    record.checkIn ||
-                                    record.status === "present"
-                            )
-                            .map((record) =>
-                                String(
-                                    record.userId?._id ||
-                                    record.userId?.id ||
-                                    record.userId
-                                )
-                            )
-                    ).size
-                ),
-                checkedIn: records.filter(
-                    (record) => Boolean(record.checkIn)
-                ).length,
-                checkedOut: records.filter(
-                    (record) => Boolean(record.checkOut)
-                ).length,
-            };
-
-        return res.status(200).json({
-            success: true,
-            view,
-            date: view === "daily" ? date : undefined,
-            month,
-            employees,
-            records,
-            summary,
-        });
-    } catch (error) {
-        console.error(
-            "CTO/MD company attendance error:",
-            error
-        );
-
-        return res.status(500).json({
-            success: false,
-            message: "Unable to fetch company attendance.",
-        });
     }
-});
+);
 
 module.exports = router;

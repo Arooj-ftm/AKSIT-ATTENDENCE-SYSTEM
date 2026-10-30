@@ -5,33 +5,38 @@ const holidaySchema = new mongoose.Schema(
     {
         name: {
             type: String,
-            required: [true, "Holiday name is required."],
+            required: true,
             trim: true,
-            maxlength: [150, "Holiday name cannot exceed 150 characters."],
+            maxlength: 150,
         },
 
         date: {
             type: String,
-            required: [true, "Holiday date is required."],
-            match: [
-                /^\d{4}-\d{2}-\d{2}$/,
-                "Date must use YYYY-MM-DD format.",
-            ],
-
+            required: true,
+            match: /^\d{4}-\d{2}-\d{2}$/,
         },
 
         type: {
             type: String,
             enum: ["public", "company"],
-            required: [true, "Holiday type is required."],
             default: "public",
+            required: true,
         },
 
         description: {
             type: String,
             trim: true,
-            maxlength: [500, "Description cannot exceed 500 characters."],
             default: "",
+            maxlength: 1000,
+        },
+
+        // false = holiday; attendance is not required.
+        // true = working day; normal attendance rules apply.
+        // Existing holiday documents without this field are
+        // treated as non-working holidays.
+        isWorkingDay: {
+            type: Boolean,
+            default: false,
         },
 
         createdBy: {
@@ -45,8 +50,11 @@ const holidaySchema = new mongoose.Schema(
     }
 );
 
-// Prevent duplicate holidays on the same date.
-holidaySchema.index({ date: 1 }, { unique: true });
+// One holiday entry per calendar date.
+holidaySchema.index(
+    { date: 1 },
+    { unique: true }
+);
 
 module.exports =
     mongoose.models.Holiday ||

@@ -59,6 +59,8 @@ app.use("/api/tasks", require("./routes/taskRoutes"));
 
 app.use("/api/cto-md", require("./routes/ctoMdRoutes"));
 
+app.use("/api/ceo", require("./routes/ceoRoutes"));
+
 async function startServer() {
     try {
         await connectDB();

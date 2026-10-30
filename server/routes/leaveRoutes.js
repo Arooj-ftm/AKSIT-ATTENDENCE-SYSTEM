@@ -120,22 +120,50 @@ function isSunday(dateString) {
 }
 
 async function getWorkingDates(startDate, endDate) {
-    const dates = getDatesInRange(startDate, endDate);
+    const Holiday = require("../models/Holiday");
 
     const holidays = await Holiday.find({
-        date: { $in: dates },
+        date: {
+            $gte: startDate,
+            $lte: endDate,
+        },
     })
-        .select("date")
+        .select("date isWorkingDay")
         .lean();
 
-    const holidayDates = new Set(
-        holidays.map((holiday) => holiday.date)
+    const holidayMap = new Map(
+        holidays.map((holiday) => [
+            holiday.date,
+            holiday.isWorkingDay === true,
+        ])
     );
 
-    return dates.filter(
-        (date) => !isSunday(date) && !holidayDates.has(date)
-    );
+    const workingDates = [];
+    const current = new Date(`${startDate}T00:00:00.000Z`);
+    const end = new Date(`${endDate}T00:00:00.000Z`);
+
+    while (current <= end) {
+        const date = current.toISOString().slice(0, 10);
+        const dayOfWeek = current.getUTCDay();
+
+        const isHoliday = holidayMap.has(date);
+        const isWorkingHoliday = holidayMap.get(date) === true;
+        const isSunday = dayOfWeek === 0;
+
+        // An explicitly designated working holiday overrides
+        // the normal Sunday/holiday exclusion.
+        if (isWorkingHoliday) {
+            workingDates.push(date);
+        } else if (!isSunday && !isHoliday) {
+            workingDates.push(date);
+        }
+
+        current.setUTCDate(current.getUTCDate() + 1);
+    }
+
+    return workingDates;
 }
+
 
 function getAgeInMonths(fromDate, toDate) {
     let months =
@@ -305,17 +333,36 @@ function escapeRegex(value) {
  * - Other requests default to HR.
  */
 function getRequestStage(request, owner) {
-    if (request.approvalStage) {
-        return request.approvalStage;
+    const ownerRole = String(owner?.role || "").toLowerCase();
+    const storedStage = String(
+        request?.approvalStage || ""
+    ).toLowerCase();
+
+    // HR and CTO / Managing Director leave requests
+    // must always be reviewed by the CEO.
+    if ([HR_ROLE, CTO_MD_ROLE].includes(ownerRole)) {
+        return "ceo";
     }
 
-    const ownerRole = String(owner?.role || "").toLowerCase();
+    // Preserve completed requests.
+    if (
+        request?.status !== "pending" ||
+        storedStage === "completed"
+    ) {
+        return storedStage || "completed";
+    }
 
-    return [HR_ROLE, CTO_MD_ROLE].includes(ownerRole)
-        ? "ceo"
-        : "hr";
+    // Preserve the existing manager-to-HR approval workflow.
+    if (
+        ownerRole === "employee" &&
+        storedStage === "manager"
+    ) {
+        return "manager";
+    }
+
+    // Other eligible requests go through HR.
+    return "hr";
 }
-
 function formatBalance(item) {
     const entitled = Number(item?.entitled || 0);
     const used = Number(item?.used || 0);
@@ -1185,12 +1232,14 @@ router.get(
     }
 );
 
+
 /*
  * APPROVAL QUEUES
  *
- * Manager: active employees in their own department, manager stage only.
- * HR: employee/manager/CEO requests awaiting HR.
+ * Manager: employees in their own department, manager stage only.
+ * HR: employee, manager and CEO requests awaiting HR.
  * CEO: HR and CTO / Managing Director requests awaiting CEO.
+ * Approved/rejected history remains visible in the respective tabs.
  */
 router.get(
     "/",
@@ -1198,25 +1247,17 @@ router.get(
     async (req, res) => {
         try {
             const reviewerRole = getUserRole(req);
-            const filter = {};
+            const status = String(
+                req.query.status || "pending"
+            ).toLowerCase();
 
-            if (req.query.status !== undefined) {
-                if (
-                    !["pending", "approved", "rejected"].includes(
-                        req.query.status
-                    )
-                ) {
-                    return sendError(
-                        res,
-                        400,
-                        "Invalid leave status."
-                    );
-                }
-
-                filter.status = req.query.status;
-            } else {
-                filter.status = "pending";
+            if (
+                !["pending", "approved", "rejected"].includes(status)
+            ) {
+                return sendError(res, 400, "Invalid leave status.");
             }
+
+            const filter = { status };
 
             if (reviewerRole === MANAGER_ROLE) {
                 const manager = await User.findById(getUserId(req))
@@ -1237,7 +1278,9 @@ router.get(
                 }
 
                 const departmentPattern =
-                    `^\\s*${escapeRegex(String(manager.department).trim())}\\s*$`;
+                    `^\\s*${escapeRegex(
+                        String(manager.department).trim()
+                    )}\\s*$`;
 
                 const employees = await User.find({
                     role: "employee",
@@ -1256,15 +1299,7 @@ router.get(
 
                 filter.approvalStage = "manager";
             } else if (reviewerRole === CEO_ROLE) {
-                /*
-                 * FIX 1:
-                 * The previous code referenced undefined `owner` and `stage`
-                 * variables in the GET queue handler, causing a server error.
-                 *
-                 * Restrict the CEO queue to HR and CTO / Managing Director
-                 * leave requests, and include legacy records without an
-                 * explicitly saved approvalStage.
-                 */
+                // CEO handles HR and CTO/MD leave requests.
                 const eligibleUsers = await User.find({
                     role: {
                         $in: [HR_ROLE, CTO_MD_ROLE],
@@ -1277,13 +1312,17 @@ router.get(
                     $in: eligibleUsers.map((user) => user._id),
                 };
 
-                filter.$or = [
-                    { approvalStage: "ceo" },
-                    { approvalStage: { $exists: false } },
-                    { approvalStage: null },
-                    { approvalStage: "" },
-                ];
-            } else {
+                // Completed requests must remain visible in history.
+                if (status === "pending") {
+                    filter.$or = [
+                        { approvalStage: "ceo" },
+                        { approvalStage: { $exists: false } },
+                        { approvalStage: null },
+                        { approvalStage: "" },
+                    ];
+                }
+            } else if (reviewerRole === HR_ROLE) {
+                // HR handles employee, manager and CEO requests.
                 const eligibleUsers = await User.find({
                     role: {
                         $in: ["employee", MANAGER_ROLE, CEO_ROLE],
@@ -1296,12 +1335,15 @@ router.get(
                     $in: eligibleUsers.map((user) => user._id),
                 };
 
-                filter.$or = [
-                    { approvalStage: "hr" },
-                    { approvalStage: { $exists: false } },
-                    { approvalStage: null },
-                    { approvalStage: "" },
-                ];
+                // Only pending requests need an approval-stage filter.
+                if (status === "pending") {
+                    filter.$or = [
+                        { approvalStage: "hr" },
+                        { approvalStage: { $exists: false } },
+                        { approvalStage: null },
+                        { approvalStage: "" },
+                    ];
+                }
             }
 
             const requests = await populateLeaveRequest(
@@ -1326,6 +1368,7 @@ router.get(
         }
     }
 );
+
 
 /*
  * DOWNLOAD MEDICAL CERTIFICATE

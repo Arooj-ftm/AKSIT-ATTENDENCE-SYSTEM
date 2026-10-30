@@ -21,17 +21,21 @@ import PageHeader from "../../components/PageHeader";
 
 const getLocalDate = () => {
     const date = new Date();
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
 
-    return `${year}-${month}-${day}`;
+    return [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, "0"),
+        String(date.getDate()).padStart(2, "0"),
+    ].join("-");
 };
 
 const getLocalMonth = () => getLocalDate().slice(0, 7);
 
 const normalize = (value) =>
-    String(value || "").trim().toLowerCase().replace(/[\s_-]+/g, " ");
+    String(value || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[\s_-]+/g, " ");
 
 const formatDate = (value) => {
     if (!value) return "—";
@@ -60,23 +64,35 @@ const formatTime = (value) => {
     });
 };
 
-const getEmployeeId = (record) => {
-    const employee = record?.employeeId;
-
-    if (employee && typeof employee === "object") {
-        return String(employee._id || employee.id || "");
+const getEmployeeObject = (record) => {
+    if (record?.employee && typeof record.employee === "object") {
+        return record.employee;
     }
 
+    if (record?.userId && typeof record.userId === "object") {
+        return record.userId;
+    }
+
+    if (record?.user && typeof record.user === "object") {
+        return record.user;
+    }
+
+    if (record?.employeeId && typeof record.employeeId === "object") {
+        return record.employeeId;
+    }
+
+    return null;
+};
+
+const getEmployeeId = (record) => {
+    const employee = getEmployeeObject(record);
+
     return String(
-        employee ||
-        record?.userId?._id ||
-        record?.userId?.id ||
+        employee?._id ||
+        employee?.id ||
+        record?.employeeId ||
         record?.userId ||
-        record?.user?._id ||
-        record?.user?.id ||
         record?.user ||
-        record?.employee?._id ||
-        record?.employee?.id ||
         record?.employee ||
         record?.id ||
         record?._id ||
@@ -85,17 +101,12 @@ const getEmployeeId = (record) => {
 };
 
 const getEmployeeName = (record) => {
-    const employee = record?.employeeId;
-    const user = record?.user;
-    const populatedEmployee = record?.employee;
+    const employee = getEmployeeObject(record);
 
     return (
         record?.employeeName ||
         record?.name ||
-        (typeof employee === "object" && employee?.name) ||
-        (typeof user === "object" && user?.name) ||
-        (typeof populatedEmployee === "object" &&
-            populatedEmployee?.name) ||
+        employee?.name ||
         "Unknown employee"
     );
 };
@@ -122,34 +133,15 @@ const getStatus = (record) => {
         record.dayStatus
     );
 
-    if (
-        raw.includes("leave") ||
-        raw === "on holiday" ||
-        raw === "holiday"
-    ) {
-        return raw.includes("holiday") ? "Holiday" : "On Leave";
-    }
+    if (raw.includes("leave")) return "On Leave";
 
-    if (
-        raw === "absent" ||
-        raw === "not present"
-    ) {
-        return "Absent";
-    }
+    if (raw === "holiday" || raw === "on holiday") return "Holiday";
 
-    if (
-        raw === "late" ||
-        raw === "late arrival"
-    ) {
-        return "Late";
-    }
+    if (raw === "absent" || raw === "not present") return "Absent";
 
-    if (
-        raw === "half day" ||
-        raw === "halfday"
-    ) {
-        return "Half Day";
-    }
+    if (raw === "late" || raw === "late arrival") return "Late";
+
+    if (raw === "half day" || raw === "halfday") return "Half Day";
 
     if (
         raw === "present" ||
@@ -189,43 +181,37 @@ const getCheckOut = (record) =>
 const getWorkedTime = (record) => {
     if (!record) return "—";
 
-    const minutes =
+    const checkIn = getCheckIn(record);
+    const checkOut = getCheckOut(record);
+
+    const storedMinutes =
         Number(record.workedMinutes) ||
         Number(record.totalWorkedMinutes) ||
         Number(record.durationMinutes);
 
-    if (minutes > 0) {
-        const hours = Math.floor(minutes / 60);
-        const remainingMinutes = minutes % 60;
+    if (storedMinutes > 0) {
+        const hours = Math.floor(storedMinutes / 60);
+        const minutes = storedMinutes % 60;
 
-        return `${hours}h ${remainingMinutes}m`;
+        return `${hours}h ${minutes}m`;
     }
-
-    const checkIn = getCheckIn(record);
-    const checkOut = getCheckOut(record);
 
     if (checkIn && checkOut) {
         const start = new Date(checkIn).getTime();
         const end = new Date(checkOut).getTime();
 
-        if (Number.isFinite(start) && Number.isFinite(end) && end >= start) {
-            const totalMinutes = Math.floor((end - start) / 60000);
+        if (
+            Number.isFinite(start) &&
+            Number.isFinite(end) &&
+            end >= start
+        ) {
+            const minutes = Math.floor((end - start) / 60000);
 
-            return `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60
-                }m`;
+            return `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
         }
     }
 
     return checkIn ? "In progress" : "—";
-};
-
-const isWorkingDay = (dateString) => {
-    if (!dateString) return true;
-
-    const date = new Date(`${dateString}T00:00:00`);
-    const day = date.getDay();
-
-    return day !== 0 && day !== 6;
 };
 
 export default function CTOCompanyAttendance() {
@@ -284,16 +270,15 @@ export default function CTOCompanyAttendance() {
                     [];
 
                 setRecords(
-                    Array.isArray(responseRecords)
-                        ? responseRecords
-                        : []
+                    Array.isArray(responseRecords) ? responseRecords : []
                 );
 
                 setSummary(response.summary || null);
             } catch (err) {
+                setRecords([]);
+                setSummary(null);
                 setError(
-                    err.message ||
-                    "Unable to load company attendance."
+                    err.message || "Unable to load company attendance."
                 );
             } finally {
                 setLoading(false);
@@ -307,70 +292,25 @@ export default function CTOCompanyAttendance() {
         loadAttendance();
     }, [loadAttendance]);
 
-    const departments = useMemo(() => {
-        const values = records
-            .map((record) => {
-                const employee = record.employeeId;
-                const user = record.user;
-                const populatedEmployee = record.employee;
-
-                return (
-                    record.department ||
-                    (typeof employee === "object" && employee?.department) ||
-                    (typeof user === "object" && user?.department) ||
-                    (typeof populatedEmployee === "object" &&
-                        populatedEmployee?.department) ||
-                    ""
-                );
-            })
-            .filter(Boolean);
-
-        return [...new Set(values)].sort((a, b) =>
-            a.localeCompare(b)
-        );
-    }, [records]);
-
     const normalizedRecords = useMemo(
         () =>
             records.map((record) => {
-                const employee = record.employeeId;
-                const user = record.user;
-                const populatedEmployee = record.employee;
-
-                const employeeRole =
-                    record.role ||
-                    (typeof employee === "object" && employee?.role) ||
-                    (typeof user === "object" && user?.role) ||
-                    (typeof populatedEmployee === "object" &&
-                        populatedEmployee?.role) ||
-                    "employee";
+                const employee = getEmployeeObject(record);
 
                 return {
                     ...record,
                     _employeeId: getEmployeeId(record),
                     _name: getEmployeeName(record),
-                    _email:
-                        record.email ||
-                        (typeof employee === "object" && employee?.email) ||
-                        (typeof user === "object" && user?.email) ||
-                        (typeof populatedEmployee === "object" &&
-                            populatedEmployee?.email) ||
-                        "",
+                    _email: record.email || employee?.email || "",
                     _department:
                         record.department ||
-                        (typeof employee === "object" && employee?.department) ||
-                        (typeof user === "object" && user?.department) ||
-                        (typeof populatedEmployee === "object" &&
-                            populatedEmployee?.department) ||
+                        employee?.department ||
                         "Unassigned",
                     _designation:
                         record.designation ||
-                        (typeof employee === "object" && employee?.designation) ||
-                        (typeof user === "object" && user?.designation) ||
-                        (typeof populatedEmployee === "object" &&
-                            populatedEmployee?.designation) ||
+                        employee?.designation ||
                         "",
-                    _role: employeeRole,
+                    _role: record.role || employee?.role || "employee",
                     _status: getStatus(record),
                     _checkIn: getCheckIn(record),
                     _checkOut: getCheckOut(record),
@@ -378,6 +318,16 @@ export default function CTOCompanyAttendance() {
             }),
         [records]
     );
+
+    const departments = useMemo(() => {
+        const values = normalizedRecords
+            .map((record) => record._department)
+            .filter((value) => value && value !== "Unassigned");
+
+        return [...new Set(values)].sort((a, b) =>
+            a.localeCompare(b)
+        );
+    }, [normalizedRecords]);
 
     const filteredRecords = useMemo(() => {
         const query = search.trim().toLowerCase();
@@ -395,17 +345,13 @@ export default function CTOCompanyAttendance() {
                     String(value || "").toLowerCase().includes(query)
                 );
 
-            const matchesDepartment =
-                department === "all" ||
-                record._department === department;
-
             const matchesStatus =
                 statusFilter === "all" ||
                 normalize(record._status) === normalize(statusFilter);
 
-            return matchesSearch && matchesDepartment && matchesStatus;
+            return matchesSearch && matchesStatus;
         });
-    }, [normalizedRecords, search, department, statusFilter]);
+    }, [normalizedRecords, search, statusFilter]);
 
     const stats = useMemo(() => {
         const counts = {
@@ -444,7 +390,11 @@ export default function CTOCompanyAttendance() {
             present: Number(summary?.present ?? counts.present),
             absent: Number(summary?.absent ?? counts.absent),
             late: Number(summary?.late ?? counts.late),
-            onLeave: Number(summary?.onLeave ?? summary?.onLeaveCount ?? counts.onLeave),
+            onLeave: Number(
+                summary?.onLeave ??
+                summary?.onLeaveCount ??
+                counts.onLeave
+            ),
             halfDay: Number(summary?.halfDay ?? counts.halfDay),
         };
     }, [normalizedRecords, summary]);
@@ -489,7 +439,10 @@ export default function CTOCompanyAttendance() {
         const link = document.createElement("a");
 
         link.href = url;
-        link.download = `company-attendance-${viewMode === "daily" ? selectedDate : selectedMonth}.csv`;
+        link.download = `company-attendance-${
+            viewMode === "daily" ? selectedDate : selectedMonth
+        }.csv`;
+
         document.body.appendChild(link);
         link.click();
         link.remove();
@@ -535,6 +488,7 @@ export default function CTOCompanyAttendance() {
                 }
                 className="ctoca-shared-header"
             />
+
             {error && (
                 <div className="ctoca-alert" role="alert">
                     <AlertCircle size={18} />
@@ -572,7 +526,7 @@ export default function CTOCompanyAttendance() {
                         <span className="ctoca-stat-caption">Attendance</span>
                     </div>
                     <strong>{loading ? "—" : stats.present}</strong>
-                    <p>Present Today</p>
+                    <p>{viewMode === "daily" ? "Present on Selected Date" : "Present Records"}</p>
                     <span className="ctoca-stat-note">
                         Employees marked present
                     </span>
@@ -588,7 +542,7 @@ export default function CTOCompanyAttendance() {
                     <strong>{loading ? "—" : stats.late}</strong>
                     <p>Late Arrivals</p>
                     <span className="ctoca-stat-note">
-                        Marked late in attendance records
+                        Only available when the backend records late status
                     </span>
                 </article>
 
@@ -600,9 +554,9 @@ export default function CTOCompanyAttendance() {
                         <span className="ctoca-stat-caption">Availability</span>
                     </div>
                     <strong>{loading ? "—" : stats.onLeave}</strong>
-                    <p>On Approved Leave</p>
+                    <p>On Leave</p>
                     <span className="ctoca-stat-note">
-                        Leave records for the selected date
+                        Leave status in attendance records
                     </span>
                 </article>
             </section>
@@ -700,8 +654,8 @@ export default function CTOCompanyAttendance() {
                         <option value="all">All statuses</option>
                         <option value="Present">Present</option>
                         <option value="Absent">Absent</option>
-                        <option value="Late">Late</option>
                         <option value="On Leave">On Leave</option>
+                        <option value="Late">Late</option>
                         <option value="Half Day">Half Day</option>
                     </select>
                 </div>
@@ -744,7 +698,8 @@ export default function CTOCompanyAttendance() {
                         {!error && (
                             <small>
                                 The API must return all company employees,
-                                including those without an attendance record.
+                                including those without an attendance record
+                                in daily view.
                             </small>
                         )}
                     </div>
@@ -767,8 +722,8 @@ export default function CTOCompanyAttendance() {
                                 {filteredRecords.map((record, index) => (
                                     <tr
                                         key={
-                                            record._employeeId ||
                                             record._id ||
+                                            record._employeeId ||
                                             `${record._name}-${index}`
                                         }
                                     >
@@ -797,9 +752,7 @@ export default function CTOCompanyAttendance() {
 
                                         <td>
                                             <div className="ctoca-department">
-                                                <strong>
-                                                    {record._department}
-                                                </strong>
+                                                <strong>{record._department}</strong>
                                                 {record._designation && (
                                                     <span>{record._designation}</span>
                                                 )}
